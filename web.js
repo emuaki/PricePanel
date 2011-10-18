@@ -22,3 +22,4 @@ app.get('/', function(req, res){
 var priceSettings = require('price_settings').values;
 var priceSimulator = require('price_simulator').createPriceSimulator(io, priceSettings);
 priceSimulator.start();
+
