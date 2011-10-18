@@ -12,7 +12,7 @@ app.set('views', __dirname + '/views');
 
 var hostname = "http://pricepanel.emuaki.cloud9ide.com/";
 app.configure('production', function() {
-    hostname = "http://stark-mist-7792.herokuapp.com/";
+    hostname = "http://young-robot-5461.herokuapp.com/";
 });
 
 app.get('/', function(req, res){
