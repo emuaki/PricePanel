@@ -3,7 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="user-scalable=no,initial-scale=1" />
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.css" />
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="/javascript/jquery-1.6.4.min.js"></script>
+    <script type="text/javascript" src="/javascript/jquery.mobile-1.0rc1.js"></script>
     <script type="text/javascript">
       var socket = io.connect('<%= hostname %>');
       socket.on('price', function (data) {
@@ -14,42 +17,20 @@
      </script>
   </head>
   <body>
-    <h2>PricePanel Prototype powerd by Socket.IO</h2>
-    mobile.ejs
-    <div class="pricePanel" id="pricePanel_USDJPY">
-      <div class="currencyPair">--</div>
-      <div class="bid">--</div>
-      <div class="ask">--</div>
+    <div data-role="page">
+      <div data-role="header">
+    	<h1>PricePanel</h1>
+	  </div>
+      <div data-role="contents">
+        <div class="pricePanel" id="pricePanel_USDJPY">
+          <div class="currencyPair">--</div>
+          <div class="bid">--</div>
+          <div class="ask">--</div>
+        </div>
+      </div>
+      <div data-role="footer">
+        copy right 2011 
+      </div>
     </div>
-  
-    <div class="pricePanel" id="pricePanel_EURJPY">
-      <div class="currencyPair">--</div>
-      <div class="bid">--</div>
-      <div class="ask">--</div>
-    </div>
-
-    <div class="pricePanel" id="pricePanel_AUDJPY">
-      <div class="currencyPair">--</div>
-      <div class="bid">--</div>
-      <div class="ask">--</div>
-    </div>
-
-    <div class="pricePanel" id="pricePanel_CHFJPY">
-      <div class="currencyPair"></div>
-      <div class="bid">--</div>
-      <div class="ask">--</div>
-    </div>
-    
-    <div class="pricePanel" id="pricePanel_CADJPY">
-      <div class="currencyPair"></div>
-      <div class="bid">--</div>
-      <div class="ask">--</div>
-    </div>
-    <div class="pricePanel" id="pricePanel_NZDJPY">
-      <div class="currencyPair"></div>
-      <div class="bid">--</div>
-      <div class="ask">--</div>
-    </div>
-    
   </body>
 </html>

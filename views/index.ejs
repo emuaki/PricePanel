@@ -5,6 +5,10 @@
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
       var socket = io.connect('<%= hostname %>');
+      socket.on('notification', function(data){
+        $("#notification").html(data.message);
+      });
+
       socket.on('price', function (data) {
         var currencyPair = data.currencyPair.replace("/", "");;
         var target = $("#pricePanel_" + currencyPair);
@@ -16,7 +20,7 @@
   </head>
   <body>
     <h2>PricePanel Prototype powerd by Socket.IO</h2>
-    index.ejs
+    <div id="notification">Loding...</div>
     <div class="pricePanel" id="pricePanel_USDJPY">
       <div class="currencyPair">--</div>
       <div class="bid">--</div>
