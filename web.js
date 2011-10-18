@@ -15,10 +15,10 @@ app.configure('production', function() {
     hostname = "http://stark-mist-7792.herokuapp.com/";
 });
 
-app.get('/index.html', function(req, res){
+app.get('/', function(req, res){
 	res.render('index.ejs', { locals: {hostname : hostname} });
 });
 
-var priceSettings = require('price_settings');
+var priceSettings = require('price_settings').values;
 var priceSimulator = require('price_simulator').createPriceSimulator(io, priceSettings);
 priceSimulator.start();
