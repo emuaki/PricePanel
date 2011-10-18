@@ -19,6 +19,10 @@ app.get('/', function(req, res){
 	res.render('index.ejs', { locals: {hostname : hostname} });
 });
 
+app.get('/mobile', function(req, res){
+    res.render('mobile.ejs', { locals: {hostname : hostname} });
+});
+
 var priceSettings = require('price_settings').values;
 var priceSimulator = require('price_simulator').createPriceSimulator(io, priceSettings);
 priceSimulator.start();
