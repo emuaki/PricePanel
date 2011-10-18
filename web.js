@@ -10,10 +10,13 @@ app.set('view engine', 'ejs');
 app.set('view options', { layout: false });
 app.set('views', __dirname + '/views');
 
-app.get('/', function(req, res){
-    // テンプレートに渡す変数
-	var mes = "<p>hello world!</p>";
-	res.render('index.html', {locals:{mes:mes}});
+var hostname = "http://pricepanel.emuaki.cloud9ide.com/";
+app.configure('production', function() {
+    hostname = "http://stark-mist-7792.herokuapp.com/";
+});
+
+app.get('/index.html', function(req, res){
+	res.render('index.ejs', { locals: {hostname : hostname} });
 });
 
 var priceSettings = require('price_settings');
