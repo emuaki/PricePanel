@@ -2,6 +2,7 @@ var express = require('express');
 var app = express.createServer(), io = require('socket.io').listen(app);
 var port = process.env.PORT || process.env.C9_PORT;
 app.listen(port);
+console.log(require.paths);
 
 app.use(express.static(__dirname + '/public'));
 
