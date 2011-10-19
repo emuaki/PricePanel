@@ -38,7 +38,6 @@ var PricePanel = function(args){
 
 PricePanel.prototype = {
 		
-	/** パネル更新エフェクトの間隔 */
 	effectDuration : 1000,
 
 	elementsMapping : {
@@ -52,8 +51,7 @@ PricePanel.prototype = {
 	},	
 
 	initialize: function(args) {
-        this.currencyPair = args.currencyPair;
-		this.setPanelElements();
+        this.currencyPair = args.currencyPair.replace("/", "");
 	},
 	
 	setPanelElements: function() {
@@ -65,8 +63,11 @@ PricePanel.prototype = {
     },
 	
 	onPrice: function(data) {
-		var self = this;
-		self.priceReflesh(data);
+        if(! this.init){
+            this.setPanelElements();
+            this.init = true;
+        }
+		this.priceReflesh(data);
 	},
 	
 	priceReflesh: function(price) {
@@ -88,9 +89,8 @@ PricePanel.prototype = {
 	},
 
 	changeSpotPrice: function(newPrice, currentPrice, side) {
-	
 		this.updatePanel(this.parts[side + 'Price'], newPrice);
-	
+        
 		// エフェクト処理呼び出し
 		if (currentPrice && newPrice != currentPrice) {
 			var isDown = (newPrice -0 < currentPrice - 0);
@@ -101,14 +101,14 @@ PricePanel.prototype = {
 	
 	updateHigh: function(price) {
         var current = this.parts.high.html() - 0;
-        if(current < price){
+        if(isNaN(current) || current < price){
             this.updatePanel(this.parts.high, price);   
         }
 	},
 	
 	updateLow: function(price) {
         var current = this.parts.low.html()-0;
-        if(current > price){
+        if(isNaN(current) || current > price){
             this.updatePanel(this.parts.low, price);   
         }
 	},
@@ -122,11 +122,10 @@ PricePanel.prototype = {
 			ele.removeClass('up').removeClass('down');
 			ele.timerId = null;
 		};
-		if (isDown) {
-			ele.addClass('down');
-		} else {
-			ele.addClass('up');
-		}
+		isDown
+			? ele.addClass('down')
+			: ele.addClass('up');
+		
 		ele.timerId = setTimeout(onComplete, this.effectDuration);
 	},
 	
@@ -138,9 +137,14 @@ PricePanel.prototype = {
 
 		var arrow = (isDown) ? "▼" : "▲";
 		var onComplete = function() {
+            ele.removeClass('up').removeClass('down');
 			ele.html("&nbsp;");
 			ele.timerId = null;
 		};
+        isDown 
+            ? ele.addClass('down')
+			: ele.addClass('up');
+		
 		ele.html(arrow);
 		ele.timerId = setTimeout(onComplete, this.effectDuration);
 	},	

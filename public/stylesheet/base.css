@@ -1,15 +1,46 @@
 .pricePanel {
     border: 1px solid #333333;
-    width: 400px;
-    height: 100px;
+    width: 500px;
     margin: 5px;
+    background: url(/image/bg.jpg);
 }
 
-.pricePanel .bid{
-    float:left;
+.currencyPair {
+    width: 100px;   
 }
 
-.pricePanel .ask{
-    float:left;
-    clear: both;
+.bidPrice {
+    text-align: right;
+    width: 80px;   
+}
+
+.bidArrow {
+    font-size: small;
+    width: 25px;   
+}
+
+.askPrice {
+    text-align:right;
+    width: 80px;   
+}
+
+.askArrow {
+    font-size: small;
+    width: 25px;
+}
+
+.up {
+    color: red;   
+}
+
+.down{
+    color: blue;   
+}
+
+.high {
+    text-align: center;   
+}
+
+.low {
+    text-align: center;   
 }
