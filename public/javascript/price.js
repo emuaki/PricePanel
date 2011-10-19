@@ -1,4 +1,4 @@
-var PricePublisher = function(option){
+var PricePublisher = function(socket, option){
     this.initialize(option);
 }
 
@@ -43,24 +43,24 @@ PricePanel.prototype = {
 
 	elementsMapping : {
 		currencyPair  : "#currencyPair",
-		bidPrice      : "#reference-rate-bid .price",
-		askPrice      : "#reference-rate-ask .price",
-		bidArrow      : "#bid-arrow",
-		askArrow      : "#ask-arrow",
+		bidPrice      : "#bidPrice",
+		askPrice      : "#askPrice",
+		bidArrow      : "#bidArrow",
+		askArrow      : "#askArrow",
 		high          : "#high",
 		low           : "#low",
 	},	
 
 	initialize: function(args) {
+        this.currencyPair = args.currencyPair;
 		this.setPanelElements();
 	},
 	
-
 	setPanelElements: function() {
 		this.parts = {};
     	var map = this.elementsMapping; 
 		for(i in map){
-			this.parts[i] = $(map[i] + this.panelIndex);
+			this.parts[i] = $(map[i] + "_" + this.currencyPair);
 		}
     },
 	
@@ -77,49 +77,40 @@ PricePanel.prototype = {
         this.currentPrice = price;
 	},
 
-	updateBid: function(price, withEffect) {
-		var currentPrice = (this.currentPrice) ? this.currentPrice.bid : null;
-		this.changeSpotPrice(price, currentAsk, 'bid');
+	updateBid: function(price) {
+		var currentBid = (this.currentPrice) ? this.currentPrice.bid : null;
+		this.changeSpotPrice(price, currentBid, 'bid');
 	},
 	
-	updateAsk: function(price, withEffect) {
+	updateAsk: function(price) {
 		var currentAsk = (this.currentPrice) ? this.currentPrice.ask : null;
 		this.changeSpotPrice(price, currentAsk, 'ask');
 	},
 
-	changeSpotPrice: function(newPrice, currentPrice, side, withEffect) {
+	changeSpotPrice: function(newPrice, currentPrice, side) {
 	
 		this.updatePanel(this.parts[side + 'Price'], newPrice);
 	
 		// エフェクト処理呼び出し
-		if (withEffect && currentPrice && newPrice != currentPrice) {
-			// Numberで比較するために0を引いている
+		if (currentPrice && newPrice != currentPrice) {
 			var isDown = (newPrice -0 < currentPrice - 0);
 			this.blink(this.parts[side + 'Price'], isDown);
 			this.changeArrow(side, isDown);
 		}
 	},
 	
-	updateHigh: function(high, isSuspend) {
-
+	updateHigh: function(price) {
+        var current = new Number(this.parts[high].html());
+        if(current < price){
+            this.updatePanel(this.parts[high], price)   
+        }
 	},
 	
-	updateLow: function(low, isSuspend) {
-		if (! this.parts['low'])return;
-		
-		if (!this.currentPriceData || (this.currentPriceData && this.currentPriceData.low != low)) {
-			var isChange = (!isSuspend && this.currentPriceData && this.currentPriceData.low && low);
-			var dispValue = low ? low : '－';
-			if (dispValue == '－') {
-				this.parts['low'].css('text-align', 'center');
-			} else {
-				this.parts['low'].css('text-align', 'right');
-			}
-			this.updatePanel(this.parts['low'], Util.addComma(dispValue));
-			if (isChange) {
-				this.blink(this.parts['low'], (this.currentPriceData.low - 0 > low - 0));
-			}
-		}
+	updateLow: function(price) {
+        var current = new Number(this.parts[low].html());
+        if(current > price){
+            this.updatePanel(this.parts[low], price)   
+        }
 	},
 
     blink: function(ele, isDown) {
@@ -136,7 +127,7 @@ PricePanel.prototype = {
 		} else {
 			ele.addClass('up');
 		}
-		ele.timerId = setTimeout(onComplete, this.setting.effectDuration);
+		ele.timerId = setTimeout(onComplete, this.effectDuration);
 	},
 	
 	changeArrow: function(side, isDown) {
@@ -151,7 +142,7 @@ PricePanel.prototype = {
 			ele.timerId = null;
 		}
 		ele.html(arrow);
-		ele.timerId = setTimeout(onComplete, this.setting.effectDuration);
+		ele.timerId = setTimeout(onComplete, this.effectDuration);
 	},	
 	
 	updatePanel: function(element, value) {

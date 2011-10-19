@@ -2,21 +2,22 @@
 <html>
   <head>
     <link href="/stylesheet/base.css" media="all" rel="stylesheet" type="text/css" /> 
-    <script type="text/javascript" src="/javascript/jquery-1.6.2.min.js"></script>  
+    <script type="text/javascript" src="/javascript/jquery-1.6.4.min.js"></script>  
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="javascript/price.js"></script>
     <script type="text/javascript">
       var socket = io.connect('<%= hostname %>');
+
+      var pricePublisher = new PricePublisher(socket);
+      <% for(var i in priceSettings){ %>
+      <% var key = i.replace("/", "") %>
+        pricePublisher.addPriceListener(new PricePanel({currencyPair : <%= key %> }));
+      <% } %>
+
       socket.on('notification', function(data){
         $("#notification").html(data.message);
       });
 
-      socket.on('price', function (data) {
-        var currencyPair = data.currencyPair.replace("/", "");;
-        var target = $("#pricePanel_" + currencyPair);
-        target.find(".currencyPair").html(data.currencyPair);
-        target.find(".bid").html(data.bid);
-        target.find(".ask").html(data.ask);
-      });
    </script>
    <title>Prototype PricePanel</title>
   </head>
