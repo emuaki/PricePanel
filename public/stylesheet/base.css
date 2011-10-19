@@ -1,0 +1,15 @@
+.pricePanel {
+    border: 1px solid #333333;
+    width: 200px;
+    height: 100px;
+    margin: 5px;
+}
+
+.pricePanel .bid{
+    float:left;
+}
+
+.pricePanel .ask{
+    float:left;
+    clear: both;
+}

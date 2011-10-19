@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
   <head>
+    <link href="/stylesheet/base.css" media="all" rel="stylesheet" type="text/css" /> 
     <script type="text/javascript" src="/javascript/jquery-1.6.2.min.js"></script>  
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
@@ -22,40 +23,29 @@
   <body>
     <h2>PricePanel Prototype powerd by Socket.IO</h2>
     <div id="notification">Loding...</div>
-    <div class="pricePanel" id="pricePanel_USDJPY">
-      <div class="currencyPair">--</div>
-      <div class="bid">--</div>
-      <div class="ask">--</div>
-    </div>
-  
-    <div class="pricePanel" id="pricePanel_EURJPY">
-      <div class="currencyPair">--</div>
-      <div class="bid">--</div>
-      <div class="ask">--</div>
-    </div>
 
-    <div class="pricePanel" id="pricePanel_AUDJPY">
-      <div class="currencyPair">--</div>
-      <div class="bid">--</div>
-      <div class="ask">--</div>
-    </div>
-
-    <div class="pricePanel" id="pricePanel_CHFJPY">
-      <div class="currencyPair"></div>
-      <div class="bid">--</div>
-      <div class="ask">--</div>
-    </div>
-    
-    <div class="pricePanel" id="pricePanel_CADJPY">
-      <div class="currencyPair"></div>
-      <div class="bid">--</div>
-      <div class="ask">--</div>
-    </div>
-    <div class="pricePanel" id="pricePanel_NZDJPY">
-      <div class="currencyPair"></div>
-      <div class="bid">--</div>
-      <div class="ask">--</div>
-    </div>
+    <table class="pricePanel">
+      <tr>
+        <th>商品</th>
+        <th>BID:売</th>
+        <th>ASK:買</th>
+        <th>高値/安値</th>
+      </tr>
+      <% for(var i in priceSettings){ %>
+      <% var key = i.replace("/", "") %>
+      <tr>
+        <td id="currencyPair_<%= key %>" class="currencyPair"><%= i %></td>
+        <td id="bidPrice_<%= key %>" class="bidPrice">--</td>
+        <td id="bidArrow_<%= key %>" class="bidArrow">&nbsp;</td>
+        <td id="askPrice_<%= key %>" class="askPrice">--</td>
+        <td id="askArrow_<%= key %>" class="askArrow">&nbsp;</td>
+        <td class="highlow">
+          <div id="high_<%= key %>" class="high">--</div>
+          <div id="low_<%= key %>" class="low">--</div>        
+        </td>
+      </tr>
+      <% } %>
+    </table>
     
   </body>
 </html>

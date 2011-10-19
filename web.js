@@ -18,8 +18,18 @@ app.configure('production', function() {
     hostname = "http://young-robot-5461.herokuapp.com/";
 });
 
+var priceSettings = require('price_settings').values;
+var priceSimulator = require('price_simulator').createPriceSimulator(io, priceSettings);
+priceSimulator.start();
+
+
 app.get('/', function(req, res){
-	res.render('index.ejs', { locals: {hostname : hostname} });
+	res.render('index.ejs', {
+        locals: {
+            hostname : hostname,
+            priceSettings : priceSettings
+        } 
+    });
 });
 
 app.get('/mobile', function(req, res){
@@ -30,8 +40,3 @@ io.sockets.on('connection', function (socket) {
     socket.emit('notification', { message : 'connected' });
     console.log("new connection"); 
 });
-
-var priceSettings = require('price_settings').values;
-var priceSimulator = require('price_simulator').createPriceSimulator(io, priceSettings);
-priceSimulator.start();
-
