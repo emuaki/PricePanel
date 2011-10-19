@@ -1,5 +1,5 @@
 var PricePublisher = function(socket, option){
-    this.initialize(option);
+    this.initialize(socket, option);
 }
 
 PricePublisher.prototype = {
@@ -23,8 +23,8 @@ PricePublisher.prototype = {
         }
 	},
     
-    addPriceListener(currencyPair, listener){
-        if(undefined == this.listenerMap[currencyPair]){
+    addPriceListener: function(currencyPair, listener){
+        if(undefined === this.listenerMap[currencyPair]){
             this.listenerMap[currencyPair] = [];
         }
         this.listenerMap[currencyPair].push(listener);
@@ -48,7 +48,7 @@ PricePanel.prototype = {
 		bidArrow      : "#bidArrow",
 		askArrow      : "#askArrow",
 		high          : "#high",
-		low           : "#low",
+		low           : "#low"
 	},	
 
 	initialize: function(args) {
@@ -58,8 +58,8 @@ PricePanel.prototype = {
 	
 	setPanelElements: function() {
 		this.parts = {};
-    	var map = this.elementsMapping; 
-		for(i in map){
+        var map = this.elementsMapping; 
+		for(var i in map){
 			this.parts[i] = $(map[i] + "_" + this.currencyPair);
 		}
     },
@@ -72,8 +72,8 @@ PricePanel.prototype = {
 	priceReflesh: function(price) {
 		this.updateBid(price.bid);
 		this.updateAsk(price.ask);
-        this.setHigh(price.bid);
-		this.setLow(price.ask);
+        this.updateHigh(price.bid);
+		this.updateLow(price.ask);
         this.currentPrice = price;
 	},
 
@@ -100,16 +100,16 @@ PricePanel.prototype = {
 	},
 	
 	updateHigh: function(price) {
-        var current = new Number(this.parts[high].html());
+        var current = this.parts.high.html() - 0;
         if(current < price){
-            this.updatePanel(this.parts[high], price)   
+            this.updatePanel(this.parts.high, price);   
         }
 	},
 	
 	updateLow: function(price) {
-        var current = new Number(this.parts[low].html());
+        var current = this.parts.low.html()-0;
         if(current > price){
-            this.updatePanel(this.parts[low], price)   
+            this.updatePanel(this.parts.low, price);   
         }
 	},
 
@@ -121,7 +121,7 @@ PricePanel.prototype = {
 		var onComplete = function() {
 			ele.removeClass('up').removeClass('down');
 			ele.timerId = null;
-		}
+		};
 		if (isDown) {
 			ele.addClass('down');
 		} else {
@@ -138,16 +138,15 @@ PricePanel.prototype = {
 
 		var arrow = (isDown) ? "▼" : "▲";
 		var onComplete = function() {
-			ele.html("&nbsp;")
+			ele.html("&nbsp;");
 			ele.timerId = null;
-		}
+		};
 		ele.html(arrow);
 		ele.timerId = setTimeout(onComplete, this.effectDuration);
 	},	
 	
 	updatePanel: function(element, value) {
-		if (!element) return false;
-		$(element).html(value);
+		element.html(value);
 	}
 
 };

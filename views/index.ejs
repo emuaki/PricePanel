@@ -10,8 +10,7 @@
 
       var pricePublisher = new PricePublisher(socket);
       <% for(var i in priceSettings){ %>
-      <% var key = i.replace("/", "") %>
-        pricePublisher.addPriceListener(new PricePanel({currencyPair : <%= key %> }));
+        pricePublisher.addPriceListener("<%= i %>", new PricePanel({currencyPair : "<%= i %>" }));
       <% } %>
 
       socket.on('notification', function(data){

@@ -13,7 +13,7 @@ app.set('view engine', 'ejs');
 app.set('view options', { layout: false });
 app.set('views', __dirname + '/views');
 
-var hostname = "http://pricepanel.emuaki.cloud9ide.com/";
+var hostname = "http://pricepanel.dev.cloud9ide.com/";
 app.configure('production', function() {
     hostname = "http://young-robot-5461.herokuapp.com/";
 });
