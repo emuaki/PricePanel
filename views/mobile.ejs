@@ -24,7 +24,7 @@
     }
     .bidPrice, .askPrice{
         text-align: right;
-        width: 50px;
+        width: 80px;
         display: block;
         float: left;
     }
@@ -32,18 +32,6 @@
         width: 30px;
         display: block;
         float: left;
-    }
-    .high {
-        text-align: right;
-        width: 50px;
-        display: block;
-        float: left;
-    }
-    .low {
-        text-align: right;
-        width: 50px;
-        display: block;
-        float:left;
     }
     </style>
     <title>Prototype PricePanel</title>
@@ -61,8 +49,6 @@
               <span class="bidArrow">&nbsp;</span>
               <span class="askPrice">Ask</span>
               <span class="bidArrow">&nbsp;</span>
-              <span class="high">High</span>
-              <span class="low">Low</span>
               <span style="clear: both">&nbsp;</span>
             </li>
         <% for(var i in priceSettings){ %>
@@ -73,8 +59,6 @@
                 <span id="bidArrow_<%= key %>" class="bidArrow">&nbsp;</span>
                 <span id="askPrice_<%= key %>" class="askPrice">--</span>
                 <span id="askArrow_<%= key %>" class="askArrow">&nbsp;</span>
-                <span id="high_<%= key %>" class="high">--</span>
-                <span id="low_<%= key %>" class="low">--</span>  
                 <span style="clear: both">&nbsp;</span>
             </li>
         <% } %>
