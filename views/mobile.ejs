@@ -9,6 +9,7 @@
     <script type="text/javascript" src="/javascript/jquery.mobile-1.0rc1.js"></script>
     <script type="text/javascript" src="/javascript/price.js"></script>
     <script type="text/javascript">
+      
       var socket = io.connect('<%= hostname %>');
 
       var pricePublisher = new PricePublisher(socket);
@@ -17,12 +18,17 @@
       <% } %>
 
       $(document).ready(function(){
+        $.mobile.showPageLoadingMsg();
         $("#sendMessageButton").click(function(){
           var message = $("#chartMessageArea").val();
           socket.emit("chatMessage", {message : message});
           $.mobile.changePage("#chat", { transition: "slidedown"} );
           $("#chartMessageArea").val("");
         });
+      });
+
+      socket.on('notification', function (data) {
+        $.mobile.hidePageLoadingMsg();
       });
 
       socket.on('chatMessage', function (data) {
