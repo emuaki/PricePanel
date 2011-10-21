@@ -16,7 +16,7 @@ app.set('views', __dirname + '/views');
 
 var hostname = "http://pricepanel.dev.cloud9ide.com/";
 app.configure('production', function() {
-    hostname = "http://young-robot-5461.herokuapp.com/";
+    hostname = "http://floating-earth-4631.herokuapp.com/";
 });
 
 var priceSettings = require('price_settings').values;
