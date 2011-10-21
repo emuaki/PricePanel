@@ -44,5 +44,11 @@ app.get('/mobile', function(req, res){
 
 io.sockets.on('connection', function (socket) {
     socket.emit('notification', { message : 'connected' });
-    console.log("new connection"); 
+    
+    socket.on('chatMessage', function (data) {
+        console.log('I received a private message by ', data);
+        socket.emit('chatMessage',{message:data.message});
+        socket.broadcast.emit('chatMessage', { message : data.message });
+    });
+    
 });

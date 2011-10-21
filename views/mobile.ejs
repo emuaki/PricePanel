@@ -15,6 +15,23 @@
       <% for(var i in priceSettings){ %>
         pricePublisher.addPriceListener("<%= i %>", new PricePanel({currencyPair : "<%= i %>" }));
       <% } %>
+
+      $(document).ready(function(){
+        $("#sendMessageButton").click(function(){
+          var message = $("#chartMessageArea").val();
+          socket.emit("chatMessage", {message : message});
+          $.mobile.changePage("#chat", { transition: "slidedown"} );
+          $("#chartMessageArea").val("");
+        });
+      });
+
+      socket.on('chatMessage', function (data) {
+        var list = jQuery("<li>" + data.message + "</li>");
+        list.addClass("ui-li");
+        list.addClass("ui-li-static");
+        list.addClass("ui-body-c");
+        $("#chatMessages").append(list);
+      });
     </script>
     <style type="text/css">
     .currencyPair {
@@ -90,10 +107,7 @@
         <a href="#chatForm" data-icon="check" class="ui-btn-right" data-transition="slideup">メッセージ</a>
       </div>
       <div data-role="contents">
-        <ul data-role="listview">
-            <li>test message</li>
-            <li>test message</li>
-        </ul>
+        <ul id="chatMessages" data-role="listview"></ul>
       </div>
       <div data-role="footer" data-position="fixed">
         <div data-role="navbar">
@@ -110,12 +124,12 @@
       <div data-role="header" data-position="fixed">
         <a href="#chat" data-icon="check" class="data-icon="delete" data-transition="slidedown">Cancel</a>
         <h2>Chat</h2>
-        <a href="#" id="sendMessage" data-icon="check" class="ui-btn-right" data-transition="slidedown">投稿する</a>
+        <a href="#" id="sendMessageButton" data-icon="check" class="ui-btn-right" data-transition="slidedown">投稿する</a>
       </div>
       <div data-role="contents">
         <div data-role="fieldcontain">
             <label for="textarea">メッセージを入力してください。:</label>
-            <textarea name="textarea" id="textarea"></textarea>
+            <textarea name="textarea" id="chartMessageArea"></textarea>
         </div>
       </div>
     </div>
