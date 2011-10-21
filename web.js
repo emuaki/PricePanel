@@ -53,7 +53,7 @@ io.sockets.on('connection', function (socket) {
         connectionCount: connectionCount
     });
     
-    socket.broadcast.emit('newconnection', { 
+    socket.broadcast.emit('connectionCountChange', { 
         message : 'connected',
         connectionCount: connectionCount
     });
@@ -66,6 +66,10 @@ io.sockets.on('connection', function (socket) {
     
     socket.on('disconnect', function(){
 		connectionCount--;
+        socket.broadcast.emit('connectionCountChange', { 
+            message : 'disconnected',
+            connectionCount: connectionCount
+        });
 	});
     
 });

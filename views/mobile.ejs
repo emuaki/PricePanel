@@ -32,7 +32,7 @@
         $("#connectionCount").html(data.connectionCount);
       });
 
-      socket.on('newconnection', function (data) {
+      socket.on('connectionCountChange', function (data) {
         $("#connectionCount").html(data.connectionCount);
       });
 
