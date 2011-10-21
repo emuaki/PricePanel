@@ -9,25 +9,36 @@
     <script type="text/javascript" src="/javascript/jquery.mobile-1.0rc1.js"></script>
     <script type="text/javascript">
       var socket = io.connect('<%= hostname %>');
-      socket.on('price', function (data) {
-        var currencyPair = data.currencyPair.replace("/", "");
-        var target = document.getElementById("pricePanel_" + currencyPair);
-        target.innerHTML = data.currencyPair;
+
+      var pricePublisher = new PricePublisher(socket);
+      <% for(var i in priceSettings){ %>
+        pricePublisher.addPriceListener("<%= i %>", new PricePanel({currencyPair : "<%= i %>" }));
+      <% } %>
+
+      socket.on('notification', function(data){
+        $("#notification").html(data.message);
       });
-     </script>
+    </script>
     <title>Prototype PricePanel</title>
   </head>
   <body>
     <div data-role="page">
       <div data-role="header">
-    	<h1>PricePanel</h1>
+    	<h2>PricePanel</h2>
 	  </div>
       <div data-role="contents">
-        <div class="pricePanel" id="pricePanel_USDJPY">
-          <div class="currencyPair">--</div>
-          <div class="bid">--</div>
-          <div class="ask">--</div>
-        </div>
+        <ul data-role="listview" data-inset="true">
+        <% for(var i in priceSettings){ %>
+        <% var key = i.replace("/", "") %>
+            <li>
+                <span id="currencyPair_<% key%>"><%= i %></span>
+                <span id="bidPrice_<%= key %>" class="bidPrice">--</span>
+                <span id="bidArrow_<%= key %>" class="bidArrow">&nbsp;</span>
+                <span id="askPrice_<%= key %>" class="askPrice">--</span>
+                <span id="askArrow_<%= key %>" class="askArrow">&nbsp;</span>                
+            </li>
+        <% } %>
+        </ul>
       </div>
       <div data-role="footer">
         copy right 2011 

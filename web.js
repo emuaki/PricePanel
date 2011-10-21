@@ -13,8 +13,8 @@ app.set('view engine', 'ejs');
 app.set('view options', { layout: false });
 app.set('views', __dirname + '/views');
 
-var hostname = "http://floating-earth-4631.herokuapp.com/";
-// var hostname = "http://pricepanel.dev.cloud9ide.com/";
+
+var hostname = "http://pricepanel.dev.cloud9ide.com/";
 app.configure('production', function() {
     hostname = "http://young-robot-5461.herokuapp.com/";
 });
@@ -34,7 +34,12 @@ app.get('/', function(req, res){
 });
 
 app.get('/mobile', function(req, res){
-    res.render('mobile.ejs', { locals: {hostname : hostname} });
+    res.render('mobile.ejs', {
+        locals: {
+            hostname : hostname,
+            priceSettings : priceSettings
+        } 
+    });
 });
 
 io.sockets.on('connection', function (socket) {

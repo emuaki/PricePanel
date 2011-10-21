@@ -122,9 +122,9 @@ PricePanel.prototype = {
 			ele.removeClass('up').removeClass('down');
 			ele.timerId = null;
 		};
-		isDown
-			? ele.addClass('down')
-			: ele.addClass('up');
+		isDown 
+            ? ele.addClass('down')
+            : ele.addClass('up');
 		
 		ele.timerId = setTimeout(onComplete, this.effectDuration);
 	},
