@@ -45,9 +45,10 @@
     <title>Prototype PricePanel</title>
   </head>
   <body>
-    <div data-role="page">
+    <!-- page1 -->
+    <div data-role="page" id="currencies">
       <div data-role="header" data-position="fixed">
-        <h2>PricePanel</h2>
+        <h2>Currencies</h2>
 	  </div>
       <div data-role="contents">
         <ul data-role="listview">
@@ -75,8 +76,32 @@
       <div data-role="footer" data-position="fixed">
         <div data-role="navbar">
 			<ul>
-				<li><a href="#">Currencies</a></li>
-				<li><a href="#">Chat</a></li>
+				<li><a href="#currencies">Currencies</a></li>
+				<li><a href="#chat">Chat</a></li>
+			</ul>
+		</div>
+      </div>
+    </div>
+
+    <!-- page2 -->
+    <div data-role="page" id="chat">
+      <div data-role="header" data-position="fixed">
+        <h2>Chat</h2>
+      </div>
+      <div data-role="contents">
+        <ul data-role="listview">
+            <li>test message</li>
+            <li>test message</li>
+        </ul>
+        <div style="margin-top:5px">&nbsp;</div>
+        <label for="message">メッセージを入力してください。</label>
+        <input type="text" name="message" id="message" value="" />
+      </div>
+      <div data-role="footer" data-position="fixed">
+        <div data-role="navbar">
+			<ul>
+				<li><a href="#currencies">Currencies</a></li>
+				<li><a href="#chat">Chat</a></li>
 			</ul>
 		</div>
       </div>
