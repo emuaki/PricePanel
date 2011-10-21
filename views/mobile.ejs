@@ -29,9 +29,15 @@
 
       socket.on('notification', function (data) {
         $.mobile.hidePageLoadingMsg();
+        $("#connectionCount").html(data.connectionCount);
+      });
+
+      socket.on('newconnection', function (data) {
+        $("#connectionCount").html(data.connectionCount);
       });
 
       socket.on('chatMessage', function (data) {
+        $("#notificationMessage").remove();
         var list = jQuery("<li>" + data.message + "</li>");
         list.addClass("ui-li");
         list.addClass("ui-li-static");
@@ -75,7 +81,7 @@
       </div>
       <div data-role="contents">
         <ul data-role="listview">
-             <li data-role="list-divider">
+              <li data-role="list-divider">
               <span class="currencyPair">Currencies</span>
               <span class="bidPrice">Bid</span>
               <span class="bidArrow">&nbsp;</span>
@@ -113,7 +119,10 @@
         <a href="#chatForm" data-icon="check" class="ui-btn-right" data-transition="slideup">メッセージ</a>
       </div>
       <div data-role="contents">
-        <ul id="chatMessages" data-role="listview"></ul>
+        <ul id="chatMessages" data-role="listview">
+          <li data-role="list-divider">現在の接続数：<span id="connectionCount"></span></li>
+          <li id="notificationMessage" style="color: #666666">メッセージを投稿してください。</li>
+        </ul>
       </div>
       <div data-role="footer" data-position="fixed">
         <div data-role="navbar">

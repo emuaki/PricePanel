@@ -42,13 +42,30 @@ app.get('/mobile', function(req, res){
     });
 });
 
+var connectionCount = 0;
+
 io.sockets.on('connection', function (socket) {
-    socket.emit('notification', { message : 'connected' });
     
+    connectionCount++;
+    
+    socket.emit('notification', { 
+        message : 'connected',
+        connectionCount: connectionCount
+    });
+    
+    socket.broadcast.emit('newconnection', { 
+        message : 'connected',
+        connectionCount: connectionCount
+    });
+
     socket.on('chatMessage', function (data) {
         console.log('I received a private message by ', data);
         socket.emit('chatMessage',{message:data.message});
         socket.broadcast.emit('chatMessage', { message : data.message });
     });
+    
+    socket.on('disconnect', function(){
+		connectionCount--;
+	});
     
 });
