@@ -18,13 +18,13 @@
     </script>
     <style type="text/css">
     .currencyPair {
-        width: 25%;
+        width: 30%;
         display: block;
         float: left;
     }
     .bidPrice, .askPrice{
         text-align: right;
-        width: 20%;
+        width: 30%;
         display: block;
         float: left;
     }
@@ -49,7 +49,7 @@
     <div data-role="page" id="currencies">
       <div data-role="header" data-position="fixed">
         <h2>Currencies</h2>
-	  </div>
+      </div>
       <div data-role="contents">
         <ul data-role="listview">
              <li data-role="list-divider">
@@ -87,15 +87,13 @@
     <div data-role="page" id="chat">
       <div data-role="header" data-position="fixed">
         <h2>Chat</h2>
+        <a href="#chatForm" data-icon="check" class="ui-btn-right" data-transition="slideup">投稿</a>
       </div>
       <div data-role="contents">
         <ul data-role="listview">
             <li>test message</li>
             <li>test message</li>
         </ul>
-        <div style="margin-top:5px">&nbsp;</div>
-        <label for="message">メッセージを入力してください。</label>
-        <input type="text" name="message" id="message" value="" />
       </div>
       <div data-role="footer" data-position="fixed">
         <div data-role="navbar">
@@ -106,5 +104,21 @@
 		</div>
       </div>
     </div>
+
+    <!-- page3 -->
+    <div data-role="page" id="chatForm">
+      <div data-role="header" data-position="fixed">
+        <a href="#chat" data-icon="check" class="data-icon="delete" data-transition="slidedown">Cancel</a>
+        <h2>Chat</h2>
+        <a href="#" id="sendMessage" data-icon="check" class="ui-btn-right" data-transition="slidedown">投稿</a>
+      </div>
+      <div data-role="contents">
+        <div data-role="fieldcontain">
+            <label for="textarea">メッセージを入力してください。:</label>
+            <textarea name="textarea" id="textarea"></textarea>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
+
