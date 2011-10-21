@@ -7,6 +7,7 @@
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="/javascript/jquery-1.6.4.min.js"></script>
     <script type="text/javascript" src="/javascript/jquery.mobile-1.0rc1.js"></script>
+    <script type="text/javascript" src="/javascript/price.js"></script>
     <script type="text/javascript">
       var socket = io.connect('<%= hostname %>');
 
@@ -14,20 +15,34 @@
       <% for(var i in priceSettings){ %>
         pricePublisher.addPriceListener("<%= i %>", new PricePanel({currencyPair : "<%= i %>" }));
       <% } %>
-
-      socket.on('notification', function(data){
-        $("#notification").html(data.message);
-      });
     </script>
+    <style type="text/css">
+    .currencyPair {
+        width: "80px";
+    }
+    .bidPrice, .askPrice{
+        width: "50px";
+    }
+    .high, .low {
+        width: "50px";
+    }
+    </style>
     <title>Prototype PricePanel</title>
   </head>
   <body>
     <div data-role="page">
-      <div data-role="header">
-    	<h2>PricePanel</h2>
+      <div data-role="header" data-position="fixed">
+        <h2>PricePanel</h2>
 	  </div>
       <div data-role="contents">
-        <ul data-role="listview" data-inset="true">
+        <ul data-role="listview">
+             <li data-role="list-divider">
+              <span>Currencies</span>
+              <span>Bid</span>
+              <span>Ask</span>
+              <span>High</span>
+              <span>Low</span>
+            </li>
         <% for(var i in priceSettings){ %>
         <% var key = i.replace("/", "") %>
             <li>
@@ -35,13 +50,20 @@
                 <span id="bidPrice_<%= key %>" class="bidPrice">--</span>
                 <span id="bidArrow_<%= key %>" class="bidArrow">&nbsp;</span>
                 <span id="askPrice_<%= key %>" class="askPrice">--</span>
-                <span id="askArrow_<%= key %>" class="askArrow">&nbsp;</span>                
+                <span id="askArrow_<%= key %>" class="askArrow">&nbsp;</span>
+                <span id="high_<%= key %>" class="high">--</span>
+                <span id="low_<%= key %>" class="low">--</span>                
             </li>
         <% } %>
         </ul>
       </div>
-      <div data-role="footer">
-        copy right 2011 
+      <div data-role="footer" data-position="fixed">
+        <div data-role="navbar">
+			<ul>
+				<li><a href="#">Currencies</a></li>
+				<li><a href="#">Chat</a></li>
+			</ul>
+		</div>
       </div>
     </div>
   </body>
