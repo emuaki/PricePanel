@@ -10,7 +10,9 @@
     <script type="text/javascript" src="/javascript/price.js"></script>
     <script type="text/javascript">
       
-      var socket = io.connect('<%= hostname %>');
+      var socket = io.connect('<%= hostname %>',{
+        'connect timeout' : 3000
+      });
 
       var pricePublisher = new PricePublisher(socket);
       <% for(var i in priceSettings){ %>

@@ -42,18 +42,11 @@ app.get('/mobile', function(req, res){
     });
 });
 
-
-io.set('transports', [
-    'htmlfile',
-    'xhr-polling',
-    'jsonp-polling'
-]);
-
 io.configure('production', function(){
     io.enable('browser client minification');
     io.enable('browser client gzip');
-    io.set('log level', 1);
     io.set('transports', [
+        'websocket',
         'htmlfile',
         'xhr-polling',
         'jsonp-polling'
@@ -62,7 +55,7 @@ io.configure('production', function(){
 
 var connectionCount = 0;
 io.sockets.on('connection', function (socket) {
-    
+
     connectionCount++;
     
     socket.emit('notification', { 
