@@ -49,6 +49,17 @@ io.set('transports', [
     'jsonp-polling'
 ]);
 
+io.configure('production', function(){
+    io.enable('browser client minification');
+    io.enable('browser client gzip');
+    io.set('log level', 1);
+    io.set('transports', [
+        'htmlfile',
+        'xhr-polling',
+        'jsonp-polling'
+    ]);
+});
+
 var connectionCount = 0;
 io.sockets.on('connection', function (socket) {
     
