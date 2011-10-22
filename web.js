@@ -42,8 +42,15 @@ app.get('/mobile', function(req, res){
     });
 });
 
-var connectionCount = 0;
 
+io.set('transports', [
+    'flashsocket',
+    'htmlfile',
+    'xhr-polling',
+    'jsonp-polling'
+]);
+
+var connectionCount = 0;
 io.sockets.on('connection', function (socket) {
     
     connectionCount++;
