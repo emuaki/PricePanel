@@ -11,7 +11,7 @@
     <script type="text/javascript">
       
       var socket = io.connect('<%= hostname %>',{
-        'connect timeout' : 3000
+        'connect timeout' : 2000
       });
 
       var pricePublisher = new PricePublisher(socket);
