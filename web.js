@@ -44,7 +44,6 @@ app.get('/mobile', function(req, res){
 
 
 io.set('transports', [
-    'flashsocket',
     'htmlfile',
     'xhr-polling',
     'jsonp-polling'
