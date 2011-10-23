@@ -34,7 +34,7 @@ app.get('/', function(req, res){
 });
 
 app.get('/mobile', function(req, res){
-    res.render('mobile.ejs', {
+    res.render('mobile/index.ejs', {
         locals: {
             hostname : hostname,
             priceSettings : priceSettings

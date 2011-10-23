@@ -104,14 +104,7 @@
         <% } %>
         </ul>
       </div>
-      <div data-role="footer" data-position="fixed">
-        <div data-role="navbar">
-			<ul>
-				<li><a href="#currencies">Currencies</a></li>
-				<li><a href="#chat">Chat</a></li>
-			</ul>
-		</div>
-      </div>
+      <%- partial('footer.ejs') %>
     </div>
 
     <!-- chat page -->
@@ -122,18 +115,10 @@
       </div>
       <div data-role="contents">
         <ul id="chatMessages" data-role="listview">
-          <li data-role="list-divider">現在の接続数：<span id="connectionCount"></span></li>
           <li id="notificationMessage" style="color: #666666">メッセージを投稿してください。</li>
         </ul>
       </div>
-      <div data-role="footer" data-position="fixed">
-        <div data-role="navbar">
-			<ul>
-				<li><a href="#currencies">Currencies</a></li>
-				<li><a href="#chat">Chat</a></li>
-			</ul>
-		</div>
-      </div>
+      <%- partial('footer.ejs') %>      
     </div>
 
     <!-- chat form -->
@@ -149,6 +134,20 @@
             <textarea name="textarea" id="chartMessageArea"></textarea>
         </div>
       </div>
+    </div>
+
+    <!-- info -->
+    <div data-role="page" id="info">
+      <div data-role="header" data-position="fixed">
+        <h2>Info</h2>
+      </div>
+      <div data-role="contents"
+        <ul data-role="listview">
+         <li>現在の接続数：<span id="connectionCount"></span></li>
+         <li>現在の接続方法：<span id="transport"></span></li>         
+        </ul>
+      </div>
+      <%- partial('footer.ejs') %>      
     </div>
   </body>
 </html>
