@@ -32,6 +32,7 @@
       socket.on('notification', function (data) {
         $.mobile.hidePageLoadingMsg();
         $("#connectionCount").html(data.connectionCount);
+        $("#transport").html(data.transport);
       });
 
       socket.on('connectionCountChange', function (data) {
@@ -141,10 +142,10 @@
       <div data-role="header" data-position="fixed">
         <h2>Info</h2>
       </div>
-      <div data-role="contents"
+      <div data-role="contents">
         <ul data-role="listview">
          <li>現在の接続数：<span id="connectionCount"></span></li>
-         <li>現在の接続方法：<span id="transport"></span></li>         
+         <li>現在の接続方法：<span id="transport"></span></li>   
         </ul>
       </div>
       <%- partial('footer.ejs') %>      

@@ -59,7 +59,8 @@ io.sockets.on('connection', function (socket) {
     
     socket.emit('notification', { 
         message : 'connected',
-        connectionCount: connectionCount
+        connectionCount: connectionCount,
+        transport : socket.transport
     });
     
     socket.broadcast.emit('connectionCountChange', { 
