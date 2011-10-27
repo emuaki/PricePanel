@@ -1,0 +1,26 @@
+.currencyPair {
+  width: 25%;
+  display: block;
+  float: left;
+}
+.bidPrice,
+.askPrice {
+  text-align: right;
+  width: 25%;
+  display: block;
+  float: left;
+}
+.bidArrow,
+.askArrow {
+  width: 20px;
+  display: block;
+  float: left;
+}
+.bidArrow.up,
+.askArrow.up {
+  color: #ffb2b2;
+}
+.bidArrow.down,
+.askArrow.down {
+  color: #c4d9f7;
+}

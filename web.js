@@ -6,9 +6,19 @@ app.listen(port);
 require.paths.push('lib');
 console.log(require.paths);
 
-app.use(express.static(__dirname + '/public'));
+var ejs = require('ejs'),
+    stylus = require('stylus') ,
+    nib = require('nib');
 
-var ejs = require('ejs');
+app.use(express.static(__dirname + '/public'));
+function compile(str, path){
+    console.log(str + path);
+    return stylus(str)
+        .set('filename', path)
+        .use(nib());
+}
+app.use(stylus.middleware({src: __dirname + '/public', compile: compile}));
+    
 app.set('view engine', 'ejs');
 app.set('view options', { layout: false });
 app.set('views', __dirname + '/views');
