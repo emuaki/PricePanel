@@ -95,9 +95,36 @@ io.sockets.on('connection', function (socket) {
 });
 
 
-// http://www.fxstreet.jp/_ajax/token.aspx
+
 var http = require('http');
-var path = '/http_push/handshake?jsonp=jsonp1319760854057&message=%5B%7B%22ext%22%3A%7B%22teletrader%22%3A%7B%22SymbolFIDs%22%3A%22last%2Copen%2Chigh%2Clow%2Cchange%2CchangePercent%2CdateTime%22%2C%22AuthToken%22%3A%22Q8HMMR48H0UR2%2BmTjPEj030jRO3DTnGZy5okyqQt2grll1lvhXIEkweP%2BCRBAqsXBlcPbW5hTJhX%2FstMbcR7E9FKGC45RQx758i%2Fh9H0fGV4sds%2BgzezG1p4n3NTgrV%2Fkb6qmju%2FJwNt8if2%2FrwKDJGUVg64PV5QS2c%2BdSKIYRpBxMuUr1b9bMCh3dKF%2F%2BlORUlZh9AMPlc89ViJrF8zxOKi0viMeqSaSUbUiROiVfuIjSRKswVZh39ti1IpmCYb031sXSy9%2BYQXVf%2BrPgTiLW4%2BJY35%2FTZ9FP49wkWs9iByG9dIxUg9eJ42kLrv3Ldw7VReAUarb3xxMm3mUqqX2uzU5CLRtMY3HUJTWnjlRYKOXSPjzp%2BilnOhcM3caqL9W7AKF3EZoirHUh0M8p37aQXPwBCgFo99X9dWZlUogMd%2Bo26VfSgYhT9V1hy3rEna8ARse3XsBPjG3%2FgYwNPUDAGPsMKVnSZbAji%2F9za0XpbbfOsJhXsEEmte1cAUgY%2Bkd764rDhBYcIhaJb50%2B5qgLmYa%2B4H6Cs%2BqXolfqM%2FQIRB%2B3xU%2FbhXQaxbfuHXlxvQlwK0v2YG1keSd3KGQdEG8R7B70jd0Fo5CjkeDXqDHhcbySKKREcG05YzDSJ8lD%2FKh9fzj9g85YGLVd4AIrAaa3%2FXVDzcbDanP16KoSw6xTmCGi5b%2B7R28gy7UwPIv4tqfuWdebbQyNvQakEs%2F6b%2FfDk1UQd96GHFQGlnH97BjEmt9n8eszui1eJvsVIzRX%2Fkly3aHsBfhGET4tLYrxAnUQe8YimbtfzkbooBeh%2B7VG0LGPq5uYwkmGMEVDvhDgMq%2BJ9OzTuivMSIBBZ8cB3LWQ%3D%3D%22%7D%7D%2C%22version%22%3A%221.0%22%2C%22minimumVersion%22%3A%220.9%22%2C%22channel%22%3A%22%2Fmeta%2Fhandshake%22%2C%22supportedConnectionTypes%22%3A%5B%22xhr-streaming%22%2C%22hidden-iframe%22%2C%22callback-polling%22%2C%22long-polling%22%5D%2C%22id%22%3A%221%22%7D%5D'
+
+var getToken = {
+  host : 'www.fxstreet.jp',
+  port : 80,
+  path : '/_ajax/token.aspx',
+  method: 'GET'
+};
+
+var token = "";
+var req = http.request(getToken, function(res){
+   console.log(res);
+   res.on('data',function(d){
+      console.log("token is : " + d.toString());
+      token = d.toString();
+      aaa(token);
+   });
+});
+
+req.end();
+
+function aaa(token){
+var replaced = token.replace(/\+/g, " ");    
+var param1 = '[{"ext":{"teletrader":{"SymbolFIDs":"last,open,high,low,change,changePercent,dateTime","AuthToken":"' + replaced + '"}},"version":"1.0","minimumVersion":"0.9","channel":"/meta/handshake","supportedConnectionTypes":["xhr-streaming","hidden-iframe","callback-polling","long-polling"],"id":"1"}]';
+var param2 = encodeURI(param1).replace(/:/g, "%3A").replace(/,/g, "%2C").replace(/\//g, "%2F").replace(/%20/g, "%2B");
+var path = '/http_push/handshake?jsonp=jsonp12345&message=' + param2;
+
+console.log(param1);
+console.log(param2);
 
 var handshake = {
   host : 'ttpush.fxstreet.jp',
@@ -108,9 +135,8 @@ var handshake = {
 
 var req = http.request(handshake, function(res){
     console.log(res);
-    console.log(res.statusCode);
     res.on('data', function(d){
-        console.log(d.toString());   
+        console.log('handshake result: ' + d.toString());   
     });
 });
 
@@ -123,3 +149,7 @@ var connect = {
 
 
 req.end();
+
+
+}
+
