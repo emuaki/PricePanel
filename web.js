@@ -111,20 +111,18 @@ var req = http.request(getToken, function(res){
    res.on('data',function(d){
       console.log("token is : " + d.toString());
       token = d.toString();
-      aaa(token);
+      requestHandshake(token);
    });
 });
 
 req.end();
 
-function aaa(token){
+function requestHandshake(token){
 var replaced = token.replace(/\+/g, " ");    
 var param1 = '[{"ext":{"teletrader":{"SymbolFIDs":"last,open,high,low,change,changePercent,dateTime","AuthToken":"' + replaced + '"}},"version":"1.0","minimumVersion":"0.9","channel":"/meta/handshake","supportedConnectionTypes":["xhr-streaming","hidden-iframe","callback-polling","long-polling"],"id":"1"}]';
 var param2 = encodeURI(param1).replace(/:/g, "%3A").replace(/,/g, "%2C").replace(/\//g, "%2F").replace(/%20/g, "%2B");
-var path = '/http_push/handshake?jsonp=jsonp12345&message=' + param2;
+var path = '/http_push/handshake?message=' + param2;
 
-console.log(param1);
-console.log(param2);
 
 var handshake = {
   host : 'ttpush.fxstreet.jp',
@@ -134,22 +132,106 @@ var handshake = {
 };
 
 var req = http.request(handshake, function(res){
-    console.log(res);
+    
     res.on('data', function(d){
-        console.log('handshake result: ' + d.toString());   
+        var jsonStr = d.toString().replace(/[(|)]/g, "");
+   
+        var json = eval(jsonStr);
+        console.log(json);
+        requestConnect(json[0].id, json[0].clientId);
     });
 });
 
+req.end();
+
+}
+
+
+function requestConnect(id, clientId){
+ 
 var connect = {
   host : 'ttpush.fxstreet.jp',
   port : 80,
-  path : "/http_push/handshake",
+  path : "/http_push/connect",
   method: 'POST'
 };
 
+
+var req = http.request(connect, function(res){
+  
+    res.on('data', function(d){
+        var jsonStr = d.toString().replace(/[(|)]/g, "");
+   
+        var json = eval(jsonStr);
+        console.log(json);
+        requestSubscribe(json[0].id, json[0].clientId);
+    });
+});
+
+var payload = '[{"channel":"/meta/connect","connectionType":"xhr-streaming","id":"' + id + '","clientId":"' + clientId + '"}]';
+req.write(payload);
+
+req.end();
+
+}
+
+
+function requestSubscribe(id, clientId){
+  
+var subscribe = {
+  host : 'ttpush.fxstreet.jp',
+  port : 80,
+  path : "/http_push/",
+  method: 'POST'
+};
+
+
+var req = http.request(subscribe, function(res){
+    
+    res.on('data', function(d){
+        var jsonStr = d.toString().replace(/[(|)]/g, "");
+   
+        var json = eval(jsonStr);
+        console.log(json);
+        receiveData(json[0].id, json[0].clientId, json[0].subscription[0]);
+    });
+});  
+
+var payload = '[{"channel":"/meta/subscribe","subscription":"/teletrader/symbols/3212164","id":"' + id + '","clientId":"' + clientId + '"}]';
+req.write(payload);
 
 req.end();
 
 
 }
 
+
+function receiveData(id, clientId, channel){
+
+var subscribe = {
+  host : 'ttpush.fxstreet.jp',
+  port : 80,
+  path : "/http_push/",
+  method: 'POST'
+};
+
+
+var req = http.request(subscribe, function(res){
+    console.log(res);
+    res.on('data', function(d){
+        var jsonStr = d.toString().replace(/[(|)]/g, "");
+   
+        var json = eval(jsonStr);
+        console.log(json);
+    });
+});  
+
+var payload = '[{"channel": "'+ channel + '", "clientId": "' + clientId + '", "data": "some application string or JSON encoded object",  "id": "' + id + '"}]';
+req.write(payload);
+console.log(payload);
+
+req.end();
+
+
+    
+}
