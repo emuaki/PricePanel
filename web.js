@@ -119,7 +119,7 @@ req.end();
 
 function requestHandshake(token){
 var replaced = token.replace(/\+/g, " ");    
-var param1 = '[{"ext":{"teletrader":{"SymbolFIDs":"last,open,high,low,change,changePercent,dateTime","AuthToken":"' + replaced + '"}},"version":"1.0","minimumVersion":"0.9","channel":"/meta/handshake","supportedConnectionTypes":["xhr-streaming","hidden-iframe","callback-polling","long-polling"],"id":"1"}]';
+var param1 = '[{"ext":{"teletrader":{"SymbolFIDs":"last,open,high,low,change,changePercent,dateTime","AuthToken":"' + replaced + '"}},"version":"1.0","minimumVersion":"0.9","channel":"/meta/handshake","supportedConnectionTypes":["long-polling"],"id":"1"}]';
 var param2 = encodeURI(param1).replace(/:/g, "%3A").replace(/,/g, "%2C").replace(/\//g, "%2F").replace(/%20/g, "%2B");
 var path = '/http_push/handshake?message=' + param2;
 
@@ -168,7 +168,7 @@ var req = http.request(connect, function(res){
     });
 });
 
-var payload = '[{"channel":"/meta/connect","connectionType":"xhr-streaming","id":"' + id + '","clientId":"' + clientId + '"}]';
+var payload = '[{"channel":"/meta/connect","connectionType":"forever-response","id":"' + id + '","clientId":"' + clientId + '"}]';
 req.write(payload);
 
 req.end();
@@ -195,6 +195,8 @@ var req = http.request(subscribe, function(res){
         console.log(json);
         receiveData(json[0].id, json[0].clientId, json[0].subscription[0]);
     });
+    
+
 });  
 
 var payload = '[{"channel":"/meta/subscribe","subscription":"/teletrader/symbols/3212164","id":"' + id + '","clientId":"' + clientId + '"}]';
@@ -217,19 +219,28 @@ var subscribe = {
 
 
 var req = http.request(subscribe, function(res){
-    console.log(res);
+    
     res.on('data', function(d){
         var jsonStr = d.toString().replace(/[(|)]/g, "");
    
         var json = eval(jsonStr);
         console.log(json);
     });
+    
+    res.on('close', function(){
+        console.log('end');   
+    });
 });  
 
 var payload = '[{"channel": "'+ channel + '", "clientId": "' + clientId + '", "data": "some application string or JSON encoded object",  "id": "' + id + '"}]';
 req.write(payload);
-console.log(payload);
 
+req.on('response', function(response){
+
+    response.on('data', function(chunk){
+        console.log('data');   
+    });
+});
 req.end();
 
 
