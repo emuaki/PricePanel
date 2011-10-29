@@ -107,7 +107,7 @@ var getToken = {
 
 var token = "";
 var req = http.request(getToken, function(res){
-   console.log(res);
+   
    res.on('data',function(d){
       console.log("token is : " + d.toString());
       token = d.toString();
@@ -146,7 +146,7 @@ req.end();
 
 }
 
-
+var subscribed = false;
 function requestConnect(id, clientId){
  
 var connect = {
@@ -156,7 +156,6 @@ var connect = {
   method: 'POST'
 };
 
-
 var req = http.request(connect, function(res){
   
     res.on('data', function(d){
@@ -164,7 +163,15 @@ var req = http.request(connect, function(res){
    
         var json = eval(jsonStr);
         console.log(json);
+        if(subscribed) return;
+        
         requestSubscribe(json[0].id, json[0].clientId);
+        subscribed = true;
+    });
+    
+    res.on('end', function(d){
+        console.log('reconnect');
+        setTimeout(function(){ requestConnect(id, clientId)}, 1000);
     });
 });
 
@@ -239,6 +246,14 @@ req.on('response', function(response){
 
     response.on('data', function(chunk){
         console.log('data');   
+    });
+    
+    response.on('end', function(a){
+        console.log('end'); 
+    });
+    
+    response.on('error', function(e){
+       console.log(e); 
     });
 });
 req.end();
