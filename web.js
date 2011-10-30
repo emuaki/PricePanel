@@ -165,7 +165,8 @@ var req = http.request(connect, function(res){
         console.log(json);
         if(subscribed) return;
         
-        requestSubscribe(json[0].id, json[0].clientId);
+        requestSubscribe(json[0].id, json[0].clientId, "/teletrader/symbols/3212164");
+        requestSubscribe(json[0].id, json[0].clientId, "/teletrader/symbols/3212166");
         subscribed = true;
     });
     
@@ -183,7 +184,7 @@ req.end();
 }
 
 
-function requestSubscribe(id, clientId){
+function requestSubscribe(id, clientId, channel){
   
 var subscribe = {
   host : 'ttpush.fxstreet.jp',
@@ -200,13 +201,11 @@ var req = http.request(subscribe, function(res){
    
         var json = eval(jsonStr);
         console.log(json);
-        receiveData(json[0].id, json[0].clientId, json[0].subscription[0]);
+        // receiveData(json[0].id, json[0].clientId, json[0].subscription[0]);
     });
-    
-
 });  
 
-var payload = '[{"channel":"/meta/subscribe","subscription":"/teletrader/symbols/3212164","id":"' + id + '","clientId":"' + clientId + '"}]';
+var payload = '[{"channel":"/meta/subscribe","subscription":"'+ channel + '","id":"' + id + '","clientId":"' + clientId + '"}]';
 req.write(payload);
 
 req.end();
