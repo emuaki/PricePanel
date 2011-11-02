@@ -30,8 +30,8 @@ app.configure('production', function() {
 });
 
 var priceSettings = require('price_settings').values;
-var priceSimulator = require('price_simulator').createPriceSimulator(io, priceSettings);
-priceSimulator.start();
+// var priceSimulator = require('price_simulator').createPriceSimulator(io, priceSettings);
+// priceSimulator.start();
 
 
 app.get('/', function(req, res){
@@ -96,6 +96,6 @@ io.sockets.on('connection', function (socket) {
 
 
 var fxStreet = require('fx_street').create();
-fxStreet.start();
-
+var pricePublisher = require('price_publisher').createPricePublisher(io, fxStreet);
+pricePublisher.start();
 
