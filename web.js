@@ -30,9 +30,6 @@ app.configure('production', function() {
 });
 
 var priceSettings = require('price_settings').values;
-// var priceSimulator = require('price_simulator').createPriceSimulator(io, priceSettings);
-// priceSimulator.start();
-
 
 app.get('/', function(req, res){
 	res.render('index.ejs', {
