@@ -62,6 +62,10 @@ io.configure('production', function(){
     ]);
 });
 
+var fxStreet = require('fx_street').create();
+var pricePublisher = require('price_publisher').create(io, fxStreet);
+pricePublisher.start();
+
 var connectionCount = 0;
 io.sockets.on('connection', function (socket) {
 
@@ -72,6 +76,8 @@ io.sockets.on('connection', function (socket) {
         connectionCount: connectionCount,
         transport : socket.transport
     });
+    
+    socket.emit('price', pricePublisher.latestPrices());
     
     socket.broadcast.emit('connectionCountChange', { 
         message : 'connected',
@@ -94,8 +100,4 @@ io.sockets.on('connection', function (socket) {
     
 });
 
-
-var fxStreet = require('fx_street').create();
-var pricePublisher = require('price_publisher').createPricePublisher(io, fxStreet);
-pricePublisher.start();
 
