@@ -10,28 +10,29 @@ ConnectionStatus.prototype = {
     },
     
     start : function(){
+        var self = this;
         this.socket.on('connecting', function(){
-            this.ele.html('connecting');
+            self.ele.html('connecting');
         });
         
         this.socket.on('connect', function(){
-            this.ele.html('connect');
+            self.ele.html('connect');
         });
 
         this.socket.on('connect_faild', function(){
-            this.ele.html('connect_faild');
+            self.ele.html('connect_faild');
         });
 
         this.socket.on('reconnecting', function(){
-            this.ele.html('reconnecting');
+            self.ele.html('reconnecting');
         });
         
         this.socket.on('reconnect_faild', function(){
-            this.ele.html('reconnect_faild');
+            self.ele.html('reconnect_faild');
         });
 
         this.socket.on('disconnect', function(){
-            this.ele.html('disconnect');
+            self.ele.html('disconnect');
         });
         
     }
