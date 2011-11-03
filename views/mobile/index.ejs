@@ -54,7 +54,7 @@
       
       
     </script>
-    <title>Realtime Ratepanel</title>
+    <title>Realtime PricePanel</title>
   </head>
   <body>
     <!-- currencies page -->
@@ -75,12 +75,14 @@
         <% for(var i in priceSettings){ %>
         <% var key = i.replace("/", "") %>
             <li>
+                <a href="detail">
                 <span id="currencyPair_<% key%>" class="currencyPair"><%= i %></span>
                 <span id="bidPrice_<%= key %>" class="bidPrice">--</span>
                 <span id="bidArrow_<%= key %>" class="bidArrow">&nbsp;</span>
                 <span id="askPrice_<%= key %>" class="askPrice">--</span>
                 <span id="askArrow_<%= key %>" class="askArrow">&nbsp;</span>
                 <span style="clear: both">&nbsp;</span>
+                </a>
             </li>
         <% } %>
         </ul>
