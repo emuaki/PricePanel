@@ -1,27 +1,48 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="user-scalable=no,initial-scale=1" />
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.css" />
-    <link rel="stylesheet" href="/stylesheet/mobile.css" />
-    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="/javascript/jquery-1.6.4.min.js"></script>
-    <script type="text/javascript" src="/javascript/jquery.mobile-1.0rc1.js"></script>
-    <script type="text/javascript" src="/javascript/price.js"></script>
-    <script type="text/javascript" src="/javascript/connection_status.js"></script>
-    <title>Realtime PricePanel</title>
-  </head>
-  <body>
-    <!-- currencies page -->
-    <div data-role="page" id="currencies">
-      <div data-role="header" data-position="fixed">
-        <a data-rel="back" class="ui-btn-left" data-transition="slideleft">Currencies</a>
-        <h2>Detail</h2>
-      </div>
-      <div data-role="contents">
-      
-      </div>
-    </div>
-  </body>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="user-scalable=no,initial-scale=1" />
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.css" />
+        <link rel="stylesheet" href="/stylesheet/mobile.css" />
+        <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+        <script type="text/javascript" src="/javascript/jquery-1.6.4.min.js"></script>
+        <script type="text/javascript" src="/javascript/jquery.mobile-1.0rc1.js"></script>
+        <script type="text/javascript" src="/javascript/price.js"></script>
+        <script type="text/javascript" src="/javascript/connection_status.js"></script>
+        <title>Realtime PricePanel</title>
+    </head>
+    <body>
+        <!-- currencies page -->
+        <div data-role="page" id="detail">
+            <div data-role="header" data-position="fixed">
+                <a data-rel="back" class="ui-btn-left" data-transition="slideleft">Currencies</a>
+                <h2>Detail</h2>
+            </div>
+            <div data-role="contents">
+                <div class="leftArea">
+                    USD/JPY
+                </div>
+                <div class="rightArea">
+                    <div class="bid">
+                        78.15
+                    </div>
+                    <div class="ask">
+                        79.16
+                    </div>
+                    <div class="change">
+                        +0.1
+                    </div>
+                    <div class="high">
+                        79.32
+                    </div>
+                    <div class="low">
+                        77.32
+                    </div>
+                </div>
+                <div class="chartArea">
+                </div>
+            </div>
+        </div>
+    </body>
 </html>
