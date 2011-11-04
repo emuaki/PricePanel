@@ -35,7 +35,6 @@
             "status" : "#connectionStatus",
             "transport" : "#connectionTransport"
         }).start();
-
       });
 
       socket.on('chatMessage', function (data) {
@@ -45,8 +44,7 @@
         list.addClass("ui-li-static");
         list.addClass("ui-body-c");
         $("#chatMessages").append(list);
-      });
-      
+      });    
       
     </script>
     <title>Realtime PricePanel</title>
@@ -59,7 +57,7 @@
       </div>
       <div data-role="contents">
         <ul data-role="listview">
-              <li data-role="list-divider">
+            <li data-role="list-divider">
               <span class="currencyPair">Currencies</span>
               <span class="bidPrice">Bid</span>
               <span class="bidArrow">&nbsp;</span>
@@ -71,12 +69,12 @@
         <% var key = i.replace("/", "") %>
             <li>
                 <a href="detail">
-                <span id="currencyPair_<% key%>" class="currencyPair"><%= i %></span>
-                <span id="bidPrice_<%= key %>" class="bidPrice">--</span>
-                <span id="bidArrow_<%= key %>" class="bidArrow">&nbsp;</span>
-                <span id="askPrice_<%= key %>" class="askPrice">--</span>
-                <span id="askArrow_<%= key %>" class="askArrow">&nbsp;</span>
-                <span style="clear: both">&nbsp;</span>
+                  <span id="currencyPair_<% key%>" class="currencyPair"><%= i %></span>
+                  <span id="bidPrice_<%= key %>" class="bidPrice">--</span>
+                  <span id="bidArrow_<%= key %>" class="bidArrow">&nbsp;</span>
+                  <span id="askPrice_<%= key %>" class="askPrice">--</span>
+                  <span id="askArrow_<%= key %>" class="askArrow">&nbsp;</span>
+                  <span style="clear: both">&nbsp;</span>
                 </a>
             </li>
         <% } %>
