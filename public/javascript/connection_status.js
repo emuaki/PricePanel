@@ -1,40 +1,54 @@
-var ConnectionStatus = function(socket, selector){
-    this.initialize(socket, selector);  
+var ConnectionStatus = function(socket, selectors){
+    this.initialize(socket, selectors);  
 };
 
 ConnectionStatus.prototype = {
     
-    initialize : function(socket, selector){
+    initialize : function(socket, selectors){
         this.socket = socket;
-        this.ele = $(selector);
+        this.status = $(selectors.status);
+        this.count = $(selectors.count);
+        this.transport = $(selectors.transport);
     },
     
     start : function(){
+        $.mobile.showPageLoadingMsg();
+        
         var self = this;
         this.socket.on('connecting', function(){
-            self.ele.html('connecting');
+            self.status.html('connecting');
         });
         
         this.socket.on('connect', function(){
-            self.ele.html('connect');
+            self.status.html('connect');
         });
 
         this.socket.on('connect_faild', function(){
-            self.ele.html('connect_faild');
+            self.status.html('connect_faild');
         });
 
         this.socket.on('reconnecting', function(){
-            self.ele.html('reconnecting');
+            self.status.html('reconnecting');
         });
         
         this.socket.on('reconnect_faild', function(){
-            self.ele.html('reconnect_faild');
+            self.status.html('reconnect_faild');
         });
 
         this.socket.on('disconnect', function(){
-            self.ele.html('disconnect');
+            self.status.html('disconnect');
         });
         
+        this.socket.on('notification', function (data) {
+            $.mobile.hidePageLoadingMsg();
+            self.count.html(data.connectionCount);
+            self.transport.html(data.transport);
+        });
+        
+        this.socket.on('connectionCountChange', function (data) {
+            self.count.html(data.connectionCount);
+        });
+
     }
     
 };
