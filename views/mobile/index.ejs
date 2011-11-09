@@ -15,7 +15,7 @@
       var socket = io.connect('<%= hostname %>',{
         'connect timeout' : 2000
       });
- 
+
       var pricePublisher = new PricePublisher(socket);
       <% for(var i in priceSettings){ %>
         pricePublisher.addPriceListener("<%= i %>", new PricePanel({currencyPair : "<%= i %>" }));
@@ -95,7 +95,7 @@
           <li id="notificationMessage" style="color: #666666">メッセージを投稿してください。</li>
         </ul>
       </div>
-      <%- partial('footer.ejs') %>      
+      <%- partial('footer.ejs') %>
     </div>
 
     <!-- chat form -->
