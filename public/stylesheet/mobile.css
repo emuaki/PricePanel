@@ -27,22 +27,36 @@
 #detail .leftArea {
   float: left;
   margin: 5px;
-  font-size: xx-large;
+  font-size: large;
 }
 #detail .rightArea {
   float: right;
   margin: 5px;
   text-align: right;
+  width: 160px;
+}
+#detail .label {
+  float: left;
+  font-size: small;
+  height: 30px;
+  line-height: 30px;
+}
+#detail .price {
+  float: right;
+  width: 80px;
+  height: 30px;
+  line-height: 30px;
 }
 #detail .bid,
 #detail .ask {
   font-size: xx-large;
-  font-weight: bold;
+  clear: both;
 }
 #detail .change,
 #detail .high,
 #detail .low {
   font-size: large;
+  clear: both;
 }
 #detail .chartArea {
   clear: both;

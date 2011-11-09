@@ -1,19 +1,4 @@
-<!DOCTYPE html>
-<html lang="ja">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="user-scalable=no,initial-scale=1" />
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.css" />
-        <link rel="stylesheet" href="/stylesheet/mobile.css" />
-        <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-        <script type="text/javascript" src="/javascript/jquery-1.6.4.min.js"></script>
-        <script type="text/javascript" src="/javascript/jquery.mobile-1.0rc1.js"></script>
-        <script type="text/javascript" src="/javascript/price.js"></script>
-        <script type="text/javascript" src="/javascript/connection_status.js"></script>
-        <title>Realtime PricePanel</title>
-    </head>
-    <body>
-        <!-- currencies page -->
+
         <div data-role="page" id="detail">
             <div data-role="header" data-position="fixed">
                 <a data-rel="back" class="ui-btn-left" data-transition="slideleft">Currencies</a>
@@ -25,24 +10,24 @@
                 </div>
                 <div class="rightArea">
                     <div class="bid">
-                        <div class="bidLabel">BID: </div>
-                        <div class="bidPrice">78.15</div>
+                        <div class="bidLabel label">BID: </div>
+                        <div class="bidPrice price">78.15</div>
                     </div>
                     <div class="ask">
-                        <div class="askLabel">ASK: </div>
-                        <div class="askPrice">79.16</div>
+                        <div class="askLabel label">ASK: </div>
+                        <div class="askPrice price">79.16</div>
                     </div>
                     <div class="change">
-                        <div class="changeLabel">CHANGE: </div>
-                        <div class="changePrice">+0.1</div>
+                        <div class="changeLabel label">CHANGE: </div>
+                        <div class="changePrice price">+0.1</div>
                     </div>
                     <div class="high">
-                        <div class="highLabel">HIGH: </div>
-                        <div class="highPrice">79.32</div>
+                        <div class="highLabel label">HIGH: </div>
+                        <div class="highPrice price">79.32</div>
                     </div>
                     <div class="low">
-                        <div class="lowLabel">LOW: </div>
-                        <div class="lowPrice">77.32</div>
+                        <div class="lowLabel label">LOW: </div>
+                        <div class="lowPrice price">77.32</div>
                     </div>
                 </div>
                 <div class="chartArea">
@@ -50,5 +35,4 @@
                 </div>
             </div>
         </div>
-    </body>
-</html>
+ 
