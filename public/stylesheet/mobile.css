@@ -29,18 +29,16 @@
 }
 #detail .currencyPair {
   font-size: xx-large;
-  text-align: right;
 }
 #detail .bidPrice,
 #detail .askPrice {
   font-size: xx-large;
-  text-align: right;
+  text-align: left;
 }
 #detail .changePrice,
 #detail .highPrice,
 #detail .lowPrice {
   font-size: large;
-  text-align: right;
 }
 #detail .barArea {
   clear: both;
