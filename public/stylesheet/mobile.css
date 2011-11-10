@@ -25,32 +25,22 @@
   color: #c4d9f7;
 }
 #detail .label {
-  float: left;
   font-size: small;
-  height: 30px;
-  line-height: 30px;
-}
-#detail .price,
-#detail .value {
-  float: right;
-  width: 80px;
-  height: 30px;
-  line-height: 30px;
 }
 #detail .currencyPair {
   font-size: xx-large;
-  clear: both;
+  text-align: right;
 }
-#detail .bid,
-#detail .ask {
+#detail .bidPrice,
+#detail .askPrice {
   font-size: xx-large;
-  clear: both;
+  text-align: right;
 }
-#detail .change,
-#detail .high,
-#detail .low {
+#detail .changePrice,
+#detail .highPrice,
+#detail .lowPrice {
   font-size: large;
-  clear: both;
+  text-align: right;
 }
 #detail .barArea {
   clear: both;
