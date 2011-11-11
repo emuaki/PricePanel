@@ -1,37 +1,42 @@
-        <div data-role="page" id="detail">
-            <div data-role="header" data-position="fixed">
-                <a data-rel="back" class="ui-btn-left" data-transition="slideleft">Currencies</a>
-                <h2>Detail</h2>
-            </div>
-            <div data-role="contents">
-                <div class="priceDetailArea">
+<div data-role="page" id="detail">
+    <div data-role="header" data-position="fixed">
+        <a data-rel="back" class="ui-btn-left" data-transition="slideleft">Currencies</a>
+        <h2>Detail</h2>
+    </div>
+    <div data-role="contents">
+        <ul class="pricePanelDetail" data-role="listview">
+            <li>
+                <span class="label currencyPairLabel">CurrencyPair</span>
+                <span class="value currencyPair">USD/JPY</span>
+                <span style="clear: both">&nbsp;</span>
+            </li>
+            <li>
+                <span class="label bidLabel">BID: </span>
+                <span class="value bidPrice">73.3200</span>
+                <span style="clear: both">&nbsp;</span>
+            </li>
+            <li>
+                <span class="label askLabel">ASK: </span>
+                <span class="value askPrice">74.3200</span>
+                <span style="clear: both">&nbsp;</span>
+            </li>
+            <li>
+                <span class="label changeLabel">CHANGE: </span>
+                <span class="value changePrice">+0.030</span>
+                <span style="clear: both">&nbsp;</span>
+            </li>
+            <li>
+                <span class="label highLabel">HIGH</span>
+                <span class="value highPrice">78.88</span>
+                <span style="clear: both">&nbsp;</span>
+            </li>
+            <li>
+                <span class="label lowLabel">LOW</span>
+                <span class="value lowPrice">76.88</span>
+                <span style="clear: both">&nbsp;</span>
+            </li>
+        </ul>
 
-                    <div class="ui-grid-a">
-                        <div class="ui-block-a">CurrencyPair: </div>
-                        <div class="currencyPair value ui-block-b">USD/JPY</div>
-                    </div>
-                    <div class="ui-grid-a">
-                        <div class="ui-block-a">Bid: </div>
-                        <div class="bidPrice price ui-block-b">78.15</div>
-                    </div>
-                    <div class="ui-grid-a">
-                        <div class="ui-block-a">ASK: </div>
-                        <div class="askPrice price ui-block-b">78.15</div>
-                    </div>
-                    <div class="ui-grid-a">
-                        <div class="ui-block-a">CHANGE: </div>
-                        <div class="changePrice price ui-block-b">78.15</div>
-                    </div>
-                    <div class="ui-grid-a">
-                        <div class="ui-block-a">HIGH: </div>
-                        <div class="highPrice price ui-block-b">78.15</div>
-                    </div>
-                    <div class="ui-grid-a">
-                        <div class="ui-block-a">LOW: </div>
-                        <div class="lowPrice price ui-block-b">78.15</div>
-                    </div>
-                </div>
-                <div id="bar" class="barArea"></div>
-            </div>
-        </div>
- 
+        <div id="bar" class="barArea"></div>
+    </div>
+</div>
