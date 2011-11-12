@@ -158,3 +158,9 @@ PricePanel.prototype = {
 
 };
 
+
+var DetailPricePanel = function(args){
+    this.initialize(args);   
+}
+
+DetailPricePanel.prototype 
