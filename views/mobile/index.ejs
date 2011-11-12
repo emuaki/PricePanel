@@ -45,9 +45,21 @@
         }).start();
       });
 
-    $("#detail").live("pageinit", function(){
+      var detailPanel = null;
+      var detailCurrencyPair = null;
+      $("#detail").live("pageinit", function(event){
         setTimeout(createBar, 100);
-    });
+        var param = $.mobile.path.parseUrl(event.target.baseURI).search;
+        param.match(/currencyPair=(.*)/);
+        detailCurrencyPair = RegExp.$1;
+        detailPanel = new DetailPricePanel({currencyPair : detailCurrencyPair });
+        pricePublisher.addPriceListener(detailCurrencyPair, detailPanel);
+      });
+      
+      $("#detail").live("pageremove", function(event){
+        pricePublisher.removePriceListener(detailCurrencyPair, detailPanel);
+      });
+      
 
       socket.on('chatMessage', function (data) {
         $("#notificationMessage").remove();
@@ -81,8 +93,8 @@
         <% for(var i in priceSettings){ %>
         <% var key = i.replace("/", "") %>
             <li>
-                <a href="detail">
-                  <span id="currencyPair_<% key%>" class="currencyPair"><%= i %></span>
+                <a href="detail?currencyPair=<%= i %>">
+                  <span id="currencyPair_<%= key %>" class="currencyPair"><%= i %></span>
                   <span id="bidPrice_<%= key %>" class="bidPrice">--</span>
                   <span id="bidArrow_<%= key %>" class="bidArrow">&nbsp;</span>
                   <span id="askPrice_<%= key %>" class="askPrice">--</span>

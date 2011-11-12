@@ -31,6 +31,16 @@ PricePublisher.prototype = {
             this.listenerMap[currencyPair] = [];
         }
         this.listenerMap[currencyPair].push(listener);
+    },
+    
+    removePriceListener : function(currencyPair, listener){
+        var listeners = this.listenerMap[currencyPair];
+        for(var i in listeners){
+            if(listeners[i] === listener){
+                delete listeners[i];
+                break;
+            }
+        }
     }
 };
 
@@ -161,6 +171,18 @@ PricePanel.prototype = {
 
 var DetailPricePanel = function(args){
     this.initialize(args);   
-}
+};
 
-DetailPricePanel.prototype 
+function f(){};
+f.prototype = PricePanel.prototype;
+DetailPricePanel.prototype = new f();
+
+DetailPricePanel.prototype.elementsMapping = {
+	currencyPair  : "#detailCurrencyPair",
+	bidPrice      : "#detailBidPrice",
+	askPrice      : "#detailAskPrice",
+	bidArrow      : "#detailBidArrow",
+	askArrow      : "#detailAskArrow",
+	high          : "#detailHigh",
+	low           : "#detailLow"
+};

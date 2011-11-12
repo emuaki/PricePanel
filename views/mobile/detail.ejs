@@ -7,27 +7,27 @@
         <ul class="pricePanelDetail" data-role="listview">
             <li>
                 <span class="label currencyPairLabel">CurrencyPair</span>
-                <span class="value currencyPair">USD/JPY</span>
+                <span class="value currencyPair"><%= currencyPair %></span>
                 <span style="clear: both">&nbsp;</span>
             </li>
             <li>
                 <span class="label bidLabel">BID: </span>
-                <span class="value bidPrice">73.3200</span>
+                <span id="detailBidPrice_<%= key %>" class="value bidPrice">--</span>
                 <span style="clear: both">&nbsp;</span>
             </li>
             <li>
                 <span class="label askLabel">ASK: </span>
-                <span class="value askPrice">74.3200</span>
+                <span id="detailAskPrice_<%= key %>" class="value askPrice">--</span>
                 <span style="clear: both">&nbsp;</span>
             </li>
             <li>
                 <span class="label highLabel">HIGH</span>
-                <span class="value highPrice">78.88</span>
+                <span id="detailHighPrice_<%= key %>" class="value highPrice">--</span>
                 <span style="clear: both">&nbsp;</span>
             </li>
             <li>
                 <span class="label lowLabel">LOW</span>
-                <span class="value lowPrice">76.88</span>
+                <span id="detailLowPrice_<%= key %>" class="value lowPrice">--</span>
                 <span style="clear: both">&nbsp;</span>
             </li>
         </ul>
