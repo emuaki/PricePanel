@@ -6,6 +6,8 @@ PricePublisher.prototype = {
     
     listenerMap : {},
     
+    latestPrices : {},
+    
 	initialize : function(socket, option) {
 		this.socket = socket;
         this.option = option;
@@ -19,10 +21,12 @@ PricePublisher.prototype = {
 	onPrice: function(prices) {
         for(var i in prices){
             var price = prices[i];
-            var listeners = this.listenerMap[price.currencyPair];
+            var currencyPair = price.currencyPair;
+            var listeners = this.listenerMap[currencyPair];
             for(var j in listeners){
                 listeners[j].onPrice(price);
             }
+            this.latestPrices[currencyPair] = price;
         }
 	},
     
@@ -31,6 +35,9 @@ PricePublisher.prototype = {
             this.listenerMap[currencyPair] = [];
         }
         this.listenerMap[currencyPair].push(listener);
+        
+        if(this.latestPrices[currencyPair] === undefined) return;
+        listener.onPrice(this.latestPrices[currencyPair]);
     },
     
     removePriceListener : function(currencyPair, listener){
