@@ -93,8 +93,8 @@ PricePanel.prototype = {
 	priceReflesh: function(price) {
 		this.updateBid(price.bid);
 		this.updateAsk(price.ask);
-        this.updateHigh(price.bid);
-		this.updateLow(price.ask);
+        this.updateHigh(price.high);
+		this.updateLow(price.low);
         this.currentPrice = price;
 	},
 
