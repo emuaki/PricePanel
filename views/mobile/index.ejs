@@ -53,8 +53,12 @@
         detailCurrencyPair = RegExp.$1;
         detailPanel = new DetailPricePanel({currencyPair : detailCurrencyPair });
         pricePublisher.addPriceListener(detailCurrencyPair, detailPanel);
+        var tickPanel = new TickPanel({
+            elementId : "bar",
+            currencyPair : detailCurrencyPair
+        });
         setTimeout(function(){
-            createBar(detailCurrencyPair);
+            tickPanel.draw();
         }, 100);
       });
       
