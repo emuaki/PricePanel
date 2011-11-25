@@ -1,6 +1,6 @@
 $.jqplot.config.enablePlugins = true;
 
-function createBar(){
+function createBar(currencyPair){
 
 /*
 ohlc = [['07/06/2009', 138.7, 139.68, 135.18, 135.4],
@@ -49,6 +49,21 @@ ohlc = [['07/06/2009', 138.7, 139.68, 135.18, 135.4],
     ['09/08/2008', 164.57, 164.89, 146, 148.94]
     ];
 */
+
+var ajaxDataRenderer = function(url, plot, options) {
+    var ret = null;
+    $.ajax({
+        async: false,
+        url: url,
+        dataType:"json",
+        success: function(data) {
+            ret = data;
+        }
+    });
+    console.log(ret);
+    return ret;
+};
+
 ohlc = [['07/06/2009', 138.7],
     ['06/29/2009', 143.46],
     ['06/22/2009', 140.67],
@@ -61,8 +76,9 @@ ohlc = [['07/06/2009', 138.7],
     ['05/04/2009', 128.24],
     ['04/27/2009', 122.93]
 ];
-    plot1 = $.jqplot('bar',[ohlc],{
+    plot1 = $.jqplot('bar', "./barData?currencyPair=" + currencyPair,{
       axesDefaults:{},
+      dataRenderer: ajaxDataRenderer,
       axes: {
           xaxis: {
               renderer:$.jqplot.DateAxisRenderer,
@@ -71,11 +87,6 @@ ohlc = [['07/06/2009', 138.7],
           yaxis: {
               tickOptions:{formatString:'%.2f'}
           }
-      },
-      cursor:{
-          zoom:true,
-          tooltipOffset: 10,
-          tooltipLocation: 'nw'
       }
     });
 

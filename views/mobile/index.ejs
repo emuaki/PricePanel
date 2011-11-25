@@ -48,12 +48,14 @@
       var detailPanel = null;
       var detailCurrencyPair = null;
       $("#detail").live("pageinit", function(event){
-        setTimeout(createBar, 100);
         var param = $.mobile.path.parseUrl(event.target.baseURI).search;
         param.match(/currencyPair=(.*)/);
         detailCurrencyPair = RegExp.$1;
         detailPanel = new DetailPricePanel({currencyPair : detailCurrencyPair });
         pricePublisher.addPriceListener(detailCurrencyPair, detailPanel);
+        setTimeout(function(){
+            createBar(detailCurrencyPair);
+        }, 100);
       });
       
       $("#detail").live("pageremove", function(event){
