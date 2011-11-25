@@ -49,6 +49,14 @@ ohlc = [['07/06/2009', 138.7, 139.68, 135.18, 135.4],
     ['09/08/2008', 164.57, 164.89, 146, 148.94]
     ];
 */
+var data = [
+["11/25/2011 10:09:45",77.439],
+["11/25/2011 10:09:57",77.425],
+["11/25/2011 10:10:07",77.44],
+["11/25/2011 10:10:13",77.459]
+];
+
+
 
 var ajaxDataRenderer = function(url, plot, options) {
     var ret = null;
@@ -60,24 +68,12 @@ var ajaxDataRenderer = function(url, plot, options) {
             ret = data;
         }
     });
-    console.log(ret);
-    return ret;
+    return [ret];
 };
 
-ohlc = [['07/06/2009', 138.7],
-    ['06/29/2009', 143.46],
-    ['06/22/2009', 140.67],
-    ['06/15/2009', 136.01],
-    ['06/08/2009', 143.82],
-    ['06/01/2009', 136.47],
-    ['05/26/2009', 124.76],
-    ['05/18/2009', 123.73],
-    ['05/11/2009', 127.37],
-    ['05/04/2009', 128.24],
-    ['04/27/2009', 122.93]
-];
+
     plot1 = $.jqplot('bar', "./barData?currencyPair=" + currencyPair,{
-      axesDefaults:{},
+    //plot1 = $.jqplot('bar', [data],{        
       dataRenderer: ajaxDataRenderer,
       axes: {
           xaxis: {
