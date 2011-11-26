@@ -29,6 +29,8 @@
         pricePublisher.addPriceListener("<%= i %>", new PricePanel({currencyPair : "<%= i %>" }));
       <% } %>
 
+      var barPublisher = new BarPublisher(socket);
+      
       $(document).ready(function(){
 
         $("#sendMessageButton").click(function(){
@@ -47,16 +49,18 @@
 
       var detailPanel = null;
       var detailCurrencyPair = null;
+      var tickPanel = null;
       $("#detail").live("pageinit", function(event){
         var param = $.mobile.path.parseUrl(event.target.baseURI).search;
         param.match(/currencyPair=(.*)/);
         detailCurrencyPair = RegExp.$1;
         detailPanel = new DetailPricePanel({currencyPair : detailCurrencyPair });
         pricePublisher.addPriceListener(detailCurrencyPair, detailPanel);
-        var tickPanel = new TickPanel({
+        tickPanel = new TickPanel({
             elementId : "bar",
             currencyPair : detailCurrencyPair
         });
+        barPublisher.addBarListener(tickPanel);
         setTimeout(function(){
             tickPanel.draw();
         }, 100);
@@ -64,6 +68,7 @@
       
       $("#detail").live("pageremove", function(event){
         pricePublisher.removePriceListener(detailCurrencyPair, detailPanel);
+        barPublisher.removePriceListener(detailCurrencyPair, tickPanel);
       });
       
 

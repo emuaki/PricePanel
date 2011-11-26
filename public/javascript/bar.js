@@ -54,6 +54,8 @@ TickPanel.prototype = {
     
     initialDataUrl : "./barData?currencyPair=",
     
+    maxDataSize : 100,
+    
     jqplotOption : {
         axesDefaults: {
             showMark : false,
@@ -96,12 +98,20 @@ TickPanel.prototype = {
         return [ret];
     },
     
-    add : function(){
-        
+    onBar : function(bar){
+        this.add(bar);
     },
     
-    adjust : function(){
-        
+    add : function(bar){
+        this.data(push);
+        if(this.size > this.maxDataSize){
+            this.data.shift();
+        }
+        this.draw();
+    },
+    
+    size : function(){
+        return this.data.length;
     },
     
     draw : function(){
