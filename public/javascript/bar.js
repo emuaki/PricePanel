@@ -68,7 +68,7 @@ TickPanel.prototype = {
                 renderer:$.jqplot.DateAxisRenderer,
                 tickOptions:{formatString:'%H:%M:%S'},
                 pad : 0,
-                //tickInterval: 40
+                tickInterval: 40
             },
             yaxis: {
                 tickOptions:{formatString:'%.2f'}
@@ -83,6 +83,11 @@ TickPanel.prototype = {
         this.currencyPair = option.currencyPair;
         this.elementId = option.elementId;
         this.data = this.getInitialData();
+        var self = this;
+        setTimeout(function(){
+            self.isReady = true;
+            self.draw();
+        }, 1000);
     },
     
     getInitialData : function(){
@@ -117,20 +122,28 @@ TickPanel.prototype = {
     initialized : false,
     
     draw : function(){
-        console.log(this.isDrawing);
+        if(!this.isReady){
+            return;
+        }
         if(this.isDrawing){
             return;
         }
+        
         this.isDrawing = true;
+        this.isReady = false;
+        
         if(! this.initialized){
-            console.log(this.data);
-            $.jqplot('bar', this.data, this.jqplotOption);
+            this.plot = $.jqplot('bar', this.data, this.jqplotOption);
             this.initialized = true;
         }else{
-            $.jqplot('bar', this.data, this.jqplotOption);
-            console.log(this.data);
+            this.plot.destroy();
+            this.plot = $.jqplot('bar', this.data, this.jqplotOption);
         }
-        this.isDrawing = false;
+        this.isDrawing = false;        
+        var self = this;
+        setTimeout(function(){
+            self.isReady = true;
+        }, 2000);
     }
 };
  

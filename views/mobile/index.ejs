@@ -65,7 +65,7 @@
       
       $("#detail").live("pageremove", function(event){
         pricePublisher.removePriceListener(detailCurrencyPair, detailPanel);
-        barPublisher.removePriceListener(detailCurrencyPair, tickPanel);
+        barPublisher.removeBarListener(detailCurrencyPair, tickPanel);
       });
       
 
