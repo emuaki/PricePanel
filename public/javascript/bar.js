@@ -18,7 +18,8 @@ TickPanel.prototype = {
         axes: {
             xaxis: {
                 renderer:$.jqplot.DateAxisRenderer,
-                tickOptions:{formatString:'%M:%S'}
+                tickOptions:{formatString:'%H:%M'},
+                pad : 0
             },
             yaxis: {
                 tickOptions:{formatString:'%.2f'}
