@@ -13,13 +13,15 @@ TickPanel.prototype = {
         axesDefaults: {
             showMark : false,
             fill:true,
-            fillToZero: true
+            fillToZero: true,
+            fontSize: '8pt'
         },
         axes: {
             xaxis: {
                 renderer:$.jqplot.DateAxisRenderer,
-                tickOptions:{formatString:'%H:%M'},
-                pad : 0
+                tickOptions:{formatString:'%H:%M:%S'},
+                pad : 0,
+                tickInterval: 20
             },
             yaxis: {
                 tickOptions:{formatString:'%.2f'}
