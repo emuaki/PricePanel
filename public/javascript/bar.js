@@ -17,8 +17,8 @@ BarPublisher.prototype = {
 	},
 
 	onBar: function(bar) {
-        var currencyPair = price.currencyPair;
-        var listeners = this.listenerMap[currencyPair];
+        var currencyPair = bar.currencyPair;
+         var listeners = this.listenerMap[currencyPair];
         for(var j in listeners){
             listeners[j].onBar(bar);
         }
@@ -99,11 +99,13 @@ TickPanel.prototype = {
     },
     
     onBar : function(bar){
-        this.add(bar);
+        var converted = [bar.timestamp, bar.price];
+        this.add(converted);
     },
     
     add : function(bar){
-        this.data(push);
+        console.log("tickpanel add" + bar );
+        this.data.push(bar);
         if(this.size > this.maxDataSize){
             this.data.shift();
         }

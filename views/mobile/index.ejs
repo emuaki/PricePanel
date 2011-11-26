@@ -60,7 +60,7 @@
             elementId : "bar",
             currencyPair : detailCurrencyPair
         });
-        barPublisher.addBarListener(tickPanel);
+        barPublisher.addBarListener(detailCurrencyPair, tickPanel);
         setTimeout(function(){
             tickPanel.draw();
         }, 100);
