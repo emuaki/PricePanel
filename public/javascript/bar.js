@@ -104,20 +104,25 @@ TickPanel.prototype = {
     },
     
     add : function(bar){
-        console.log("tickpanel add" + bar );
+        console.log("tickpanel add " + bar );        
         this.data.push(bar);
-        if(this.size > this.maxDataSize){
+
+        if(this.data.length > this.maxDataSize){
             this.data.shift();
         }
         this.draw();
     },
     
-    size : function(){
-        return this.data.length;
-    },
+    isDrawing : false,
     
     draw : function(){
+        if(this.isDrawing){
+            return;
+        }
+        this.isDrawing = true;
+        console.log('draw');
         $.jqplot('bar', this.data, this.jqplotOption);
+        this.isDrawing = false;
     }
 };
  
