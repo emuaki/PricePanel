@@ -61,9 +61,6 @@
             currencyPair : detailCurrencyPair
         });
         barPublisher.addBarListener(detailCurrencyPair, tickPanel);
-        setTimeout(function(){
-            tickPanel.draw();
-        }, 100);
       });
       
       $("#detail").live("pageremove", function(event){

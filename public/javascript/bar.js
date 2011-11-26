@@ -54,7 +54,7 @@ TickPanel.prototype = {
     
     initialDataUrl : "./barData?currencyPair=",
     
-    maxDataSize : 100,
+    maxDataSize : 10,
     
     jqplotOption : {
         axesDefaults: {
@@ -68,7 +68,7 @@ TickPanel.prototype = {
                 renderer:$.jqplot.DateAxisRenderer,
                 tickOptions:{formatString:'%H:%M:%S'},
                 pad : 0,
-                tickInterval: 40
+                //tickInterval: 40
             },
             yaxis: {
                 tickOptions:{formatString:'%.2f'}
@@ -104,24 +104,32 @@ TickPanel.prototype = {
     },
     
     add : function(bar){
-        console.log("tickpanel add " + bar );        
-        this.data.push(bar);
+        this.data[0].push(bar);
 
-        if(this.data.length > this.maxDataSize){
-            this.data.shift();
+        if(this.data[0].length > this.maxDataSize){
+            this.data[0].shift();
         }
         this.draw();
     },
     
     isDrawing : false,
     
+    initialized : false,
+    
     draw : function(){
+        console.log(this.isDrawing);
         if(this.isDrawing){
             return;
         }
         this.isDrawing = true;
-        console.log('draw');
-        $.jqplot('bar', this.data, this.jqplotOption);
+        if(! this.initialized){
+            console.log(this.data);
+            $.jqplot('bar', this.data, this.jqplotOption);
+            this.initialized = true;
+        }else{
+            $.jqplot('bar', this.data, this.jqplotOption);
+            console.log(this.data);
+        }
         this.isDrawing = false;
     }
 };
