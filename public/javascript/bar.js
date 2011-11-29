@@ -100,11 +100,16 @@ TickPanel.prototype = {
                 ret = data;
             }
         });
-        return [ret];
+        
+        var result = [];
+        for (var i in ret){
+            result.push([ret[i].timestamp, ret[i].price -0]);
+        }
+        return [result];
     },
     
     onBar : function(bar){
-        var converted = [bar.timestamp, bar.price];
+        var converted = [bar.timestamp, bar.price - 0];
         this.add(converted);
     },
     
