@@ -54,7 +54,7 @@ TickPanel.prototype = {
     
     initialDataUrl : "./barData?currencyPair=",
     
-    maxDataSize : 10,
+    maxDataSize : 50,
     
     isReady : false,
     
@@ -129,7 +129,7 @@ TickPanel.prototype = {
         if(diff < 0){
             return;
         }
-        for(var i; i < diff; i++){
+        for(var i=0; i < diff; i++){
             this.data[0].shift();
         }
     }, 
@@ -142,7 +142,7 @@ TickPanel.prototype = {
             return;
         }
         
-        alert(this.data[0].length);
+        console.log(this.data[0].length);
         this.isReady = false;
         if(! this.initialized){
             this.plot = $.jqplot('bar', this.data, this.jqplotOption);
