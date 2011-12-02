@@ -5,7 +5,7 @@ var BarPublisher = function(socket, option){
 BarPublisher.prototype = {
     
     listenerMap : {},
-        
+
     initialize : function(socket, option) {
 		this.socket = socket;
         this.option = option;
@@ -18,7 +18,7 @@ BarPublisher.prototype = {
 
 	onBar: function(bar) {
         var currencyPair = bar.currencyPair;
-         var listeners = this.listenerMap[currencyPair];
+        var listeners = this.listenerMap[currencyPair];
         for(var j in listeners){
             listeners[j].onBar(bar);
         }
@@ -86,8 +86,9 @@ TickPanel.prototype = {
         var self = this;
         setTimeout(function(){
             self.isReady = true;
+            self.adjust();
             self.draw();
-        }, 1000);
+        }, 500);
     },
     
     getInitialData : function(){
@@ -115,11 +116,18 @@ TickPanel.prototype = {
     
     add : function(bar){
         this.data[0].push(bar);
-
-        if(this.data[0].length > this.maxDataSize){
+        this.adjust();
+        this.draw();
+    },
+    
+    adjust : function(){
+        var diff = this.data[0].length - this.maxDataSize;
+        if(diff < 0){
+            return;
+        }
+        for(var i; i < diff; i++){
             this.data[0].shift();
         }
-        this.draw();
     },
     
     isDrawing : false,
@@ -130,13 +138,12 @@ TickPanel.prototype = {
         if(!this.isReady){
             return;
         }
-        if(this.isDrawing){
+        if(this.data.length <= 0){
             return;
         }
         
-        this.isDrawing = true;
+        alert(this.data[0].length);
         this.isReady = false;
-        
         if(! this.initialized){
             this.plot = $.jqplot('bar', this.data, this.jqplotOption);
             this.initialized = true;
@@ -144,7 +151,6 @@ TickPanel.prototype = {
             this.plot.destroy();
             this.plot = $.jqplot('bar', this.data, this.jqplotOption);
         }
-        this.isDrawing = false;        
         var self = this;
         setTimeout(function(){
             self.isReady = true;

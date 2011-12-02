@@ -11,7 +11,6 @@
     <script type="text/javascript" src="http://code.jquery.com/mobile/1.0rc2/jquery.mobile-1.0rc2.min.js"></script>
     <script language="javascript" type="text/javascript" src="/javascript/jquery.jqplot.min.js"></script>
     <script language="javascript" type="text/javascript" src="/javascript/jqplot.dateAxisRenderer.min.js"></script>
-    <script language="javascript" type="text/javascript" src="/javascript/jqplot.categoryAxisRenderer.min.js"></script>
     <script language="javascript" type="text/javascript" src="/javascript/jqplot.ohlcRenderer.min.js"></script>
     <script language="javascript" type="text/javascript" src="/javascript/jqplot.highlighter.min.js"></script>
     <script language="javascript" type="text/javascript" src="/javascript/jqplot.cursor.min.js"></script>
@@ -56,6 +55,7 @@
         detailCurrencyPair = RegExp.$1;
         detailPanel = new DetailPricePanel({currencyPair : detailCurrencyPair });
         pricePublisher.addPriceListener(detailCurrencyPair, detailPanel);
+        console.log("detail live");
         tickPanel = new TickPanel({
             elementId : "bar",
             currencyPair : detailCurrencyPair
