@@ -133,6 +133,18 @@ TickPanel.prototype = {
             this.data[0].shift();
         }
     }, 
+    
+    calcTickInterval: function(){
+        var first = this.data[0][0];
+        var length = this.data[0].length;
+        var last = this.data[0][length];
+        
+        var firstDate = new Date(first.timestamp);
+        var lastDate = new Date(last.timestamp);
+        
+        console.log(firstDate);
+        console.log(lastDate);
+    },
 
     draw : function(){
         if(!this.isReady){
@@ -141,7 +153,7 @@ TickPanel.prototype = {
         if(this.data.length <= 0){
             return;
         }
-        
+        this.calcTickInterval();
         console.log(this.data[0].length);
         this.isReady = false;
         if(! this.initialized){
