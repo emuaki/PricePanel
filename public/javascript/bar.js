@@ -56,6 +56,10 @@ TickPanel.prototype = {
     
     maxDataSize : 10,
     
+    isReady : false,
+    
+    initialized : false,
+    
     jqplotOption : {
         axesDefaults: {
             showMark : false,
@@ -128,12 +132,8 @@ TickPanel.prototype = {
         for(var i; i < diff; i++){
             this.data[0].shift();
         }
-    },
-    
-    isDrawing : false,
-    
-    initialized : false,
-    
+    }, 
+
     draw : function(){
         if(!this.isReady){
             return;
