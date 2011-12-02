@@ -56,6 +56,8 @@ TickPanel.prototype = {
     
     maxDataSize : 50,
     
+    gridSize : 5,
+    
     isReady : false,
     
     initialized : false,
@@ -135,15 +137,22 @@ TickPanel.prototype = {
     }, 
     
     calcTickInterval: function(){
+        if(this.data[0].length <= 1){
+            return 0;
+        }
         var first = this.data[0][0];
         var length = this.data[0].length;
-        var last = this.data[0][length];
+        var last = this.data[0][length - 1];
         
-        var firstDate = new Date(first.timestamp);
-        var lastDate = new Date(last.timestamp);
-        
-        console.log(firstDate);
-        console.log(lastDate);
+        var firstDate = new Date(first[0]);
+        var lastDate = new Date(last[0]);
+        var interval = (lastDate.getTime() - firstDate.getTime()) / 1000;
+        var tickInterval = interval / this.gridSize;
+        return tickInterval;
+    },
+    
+    setTickInterval : function(interval){
+          this.jqplotOption.axes.xaxis.tickInterval = interval;
     },
 
     draw : function(){
@@ -153,8 +162,7 @@ TickPanel.prototype = {
         if(this.data.length <= 0){
             return;
         }
-        this.calcTickInterval();
-        console.log(this.data[0].length);
+        this.setTickInterval(this.calcTickInterval());
         this.isReady = false;
         if(! this.initialized){
             this.plot = $.jqplot('bar', this.data, this.jqplotOption);
