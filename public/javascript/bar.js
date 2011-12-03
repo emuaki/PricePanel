@@ -29,6 +29,11 @@ BarPublisher.prototype = {
             this.listenerMap[currencyPair] = [];
         }
         this.listenerMap[currencyPair].push(listener);
+        this.subscribe();
+    },
+    
+    subscribe : function(){
+        this.socket.emit('barSubscribe', {});
     },
     
     removeBarListener : function(currencyPair, listener){
@@ -36,9 +41,14 @@ BarPublisher.prototype = {
         for(var i in listeners){
             if(listeners[i] === listener){
                 delete listeners[i];
+                this.unsubscribe();
                 break;
             }
         }
+    },
+    
+    unsubscribe : function(){
+        this.socket.emit('barUnsubscribe', {});
     }
 };
 
