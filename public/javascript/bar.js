@@ -32,18 +32,30 @@ BarPublisher.prototype = {
         this.subscribe();
     },
     
+    getSubscribeCurrencies : function(){
+        var result = [];
+        for(var i in this.listenerMap){
+            result.push(i);
+        }
+        return result;
+    },
+    
     subscribe : function(){
-        this.socket.emit('barSubscribe', {});
+        this.socket.emit('barSubscribe', this.getSubscribeCurrencies());
     },
     
     removeBarListener : function(currencyPair, listener){
         var listeners = this.listenerMap[currencyPair];
         for(var i in listeners){
             if(listeners[i] === listener){
-                delete listeners[i];
+                listeners.splice(i, 1);
                 this.unsubscribe();
                 break;
             }
+        }
+                
+        if(listeners.length === 0){
+            delete this.listenerMap[currencyPair];
         }
     },
     
@@ -51,7 +63,6 @@ BarPublisher.prototype = {
         this.socket.emit('barUnsubscribe', {});
     }
 };
-
 
 
 $.jqplot.config.enablePlugins = true;

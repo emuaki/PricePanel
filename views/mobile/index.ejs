@@ -67,7 +67,6 @@
         barPublisher.removeBarListener(detailCurrencyPair, tickPanel);
       });
       
-
       socket.on('chatMessage', function (data) {
         $("#notificationMessage").remove();
         var list = jQuery("<li>" + data.message + "</li>");
