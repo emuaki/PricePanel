@@ -1,0 +1,10 @@
+■ production環境のsocket.ioのログレベルをINFOに変更
+
+□ ClientSessionをbar, price, chat の3つにわける
+
+□ Chatをもうすこしまともに実装する。
+
+□ 1分足を作る。
+
+□ Testクラスを作る
+
