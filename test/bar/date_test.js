@@ -14,7 +14,8 @@ module.exports = {
     
     
     "test currentDateAsString" : function() {
-        assert.equal(DateUtil.currentDateAsString(), "20111111");
+        var date = new Date(2011, 12, 7, 15, 54, 30);
+        assert.equal(DateUtil.currentDateAsString(date), "2012/01/08 00:54:30");
     }
 };
 
