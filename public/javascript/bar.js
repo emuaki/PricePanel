@@ -195,7 +195,7 @@ TickPanel.prototype = {
         var self = this;
         setTimeout(function(){
             self.isReady = true;
-        }, 1000);
+        }, 200);
     }
 };
  
