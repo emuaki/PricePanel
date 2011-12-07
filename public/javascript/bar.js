@@ -137,6 +137,7 @@ TickPanel.prototype = {
     },
     
     onBar : function(bar){
+        if(bar.barType !== 0) return;
         var converted = [bar.timestamp, bar.price - 0];
         this.add(converted);
     },
