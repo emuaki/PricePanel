@@ -1,5 +1,7 @@
 ■ production環境のsocket.ioのログレベルをINFOに変更
 
+■ FxStreetから送られてくるレートのタイムスタンプがGMT+1だったので日本時間に変換するように修正
+
 □ ClientSessionをbar, price, chat の3つにわける
 
 □ Chatをもうすこしまともに実装する。
