@@ -1,3 +1,16 @@
+var util = {};
+util.extend = function(destination, source, override) {
+  for (var property in source) {
+    destination[property] = source[property];
+  }
+  
+  for (var property in override) {
+    destination[property] = override[property];
+  }
+  console.log(destination);
+  return destination;
+};
+
 var BarPublisher = function(socket, option){
     this.initialize(socket, option);
 };
@@ -80,7 +93,8 @@ var TickPanel = function(option){
     this.initialize(option);
 };
 
-TickPanel.prototype = {
+util.extend(TickPanel, BarBasePanel, {
+
     
     initialDataUrl : "./barData?currencyPair=",
     
@@ -207,5 +221,5 @@ TickPanel.prototype = {
             self.isReady = true;
         }, 200);
     }
-};
+});
  
