@@ -86,6 +86,28 @@ var BarBasePanel = function(){};
 
 BarBasePanel.prototype = {
     
+    initialDataUrl : "./barData?currencyPair=",
+    
+    maxDataSize : 50,
+    
+    gridSize : 5,
+    
+    isReady : false,
+    
+    initialized : false,
+    
+    initialize : function(option){
+        this.currencyPair = option.currencyPair;
+        this.elementId = option.elementId;
+        this.data = this.getInitialData();
+        var self = this;
+        setTimeout(function(){
+            self.isReady = true;
+            self.adjust();
+            self.draw();
+        }, 200);
+    },
+    
     getInitialData : function(){
         var ret = null;
         $.ajax({
@@ -175,15 +197,48 @@ var TickPanel = function(option){
 
 util.extend(TickPanel, BarBasePanel, {
     
-    initialDataUrl : "./barData?currencyPair=",
+    jqplotOption : {
+        axesDefaults: {
+            showMark : false,
+            fill:true,
+            fillToZero: true,
+            fontSize: '8pt'
+        },
+        axes: {
+            xaxis: {
+                renderer:$.jqplot.DateAxisRenderer,
+                tickOptions:{formatString:'%H:%M:%S'},
+                pad : 0,
+                tickInterval: 40
+            },
+            yaxis: {
+                tickOptions:{formatString:'%.2f'}
+            }
+        },
+        series:[{
+            showMarker: false
+        }]
+    },
     
-    maxDataSize : 50,
+    isTargetBarType : function(bar){
+        if(bar.barType === 0){
+            return true;
+        }
+        return false;
+    },
     
-    gridSize : 5,
-    
-    isReady : false,
-    
-    initialized : false,
+    convert : function(bar){
+        var converted = [bar.timestamp, bar.price - 0];
+        return converted;
+    }
+
+});
+ 
+var OneMinPanel = function(option){
+    this.initialize(option);
+};
+
+util.extend(OneMinPanel, BarBasePanel, {
     
     jqplotOption : {
         axesDefaults: {
@@ -208,20 +263,8 @@ util.extend(TickPanel, BarBasePanel, {
         }]
     },
     
-    initialize : function(option){
-        this.currencyPair = option.currencyPair;
-        this.elementId = option.elementId;
-        this.data = this.getInitialData();
-        var self = this;
-        setTimeout(function(){
-            self.isReady = true;
-            self.adjust();
-            self.draw();
-        }, 500);
-    },
-     
     isTargetBarType : function(bar){
-        if(bar.barType === 0){
+        if(bar.barType === 1){
             return true;
         }
         return false;
@@ -233,4 +276,3 @@ util.extend(TickPanel, BarBasePanel, {
     }
 
 });
- 
