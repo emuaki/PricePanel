@@ -82,9 +82,7 @@ BarPublisher.prototype = {
 
 $.jqplot.config.enablePlugins = true;
 
-var BarBasePanel = function(option){
-  
-};
+var BarBasePanel = function(){};
 
 BarBasePanel.prototype = {
     
@@ -104,6 +102,12 @@ BarBasePanel.prototype = {
             result.push([ret[i].timestamp, ret[i].price -0]);
         }
         return [result];
+    },
+    
+    onBar : function(bar){
+        if(! this.isTargetBarType(bar)) return;
+        var converted = this.convert(bar);
+        this.add(converted);
     },
     
     add : function(bar){
@@ -138,8 +142,31 @@ BarBasePanel.prototype = {
     },
     
     setTickInterval : function(interval){
-          this.jqplotOption.axes.xaxis.tickInterval = interval;
-    }    
+        this.jqplotOption.axes.xaxis.tickInterval = interval;
+    },
+    
+    draw : function(){
+        if(!this.isReady){
+            return;
+        }
+        if(this.data.length <= 0){
+            return;
+        }
+        this.setTickInterval(this.calcTickInterval());
+        this.isReady = false;
+        if(! this.initialized){
+            this.plot = $.jqplot('bar', this.data, this.jqplotOption);
+            this.initialized = true;
+        }else{
+            this.plot.destroy();
+            this.plot = $.jqplot('bar', this.data, this.jqplotOption);
+        }
+        var self = this;
+        setTimeout(function(){
+            self.isReady = true;
+        }, 200);
+    }
+    
 };
 
 var TickPanel = function(option){
@@ -193,32 +220,17 @@ util.extend(TickPanel, BarBasePanel, {
         }, 500);
     },
      
-    onBar : function(bar){
-        if(bar.barType !== 0) return;
-        var converted = [bar.timestamp, bar.price - 0];
-        this.add(converted);
+    isTargetBarType : function(bar){
+        if(bar.barType === 0){
+            return true;
+        }
+        return false;
     },
     
-    draw : function(){
-        if(!this.isReady){
-            return;
-        }
-        if(this.data.length <= 0){
-            return;
-        }
-        this.setTickInterval(this.calcTickInterval());
-        this.isReady = false;
-        if(! this.initialized){
-            this.plot = $.jqplot('bar', this.data, this.jqplotOption);
-            this.initialized = true;
-        }else{
-            this.plot.destroy();
-            this.plot = $.jqplot('bar', this.data, this.jqplotOption);
-        }
-        var self = this;
-        setTimeout(function(){
-            self.isReady = true;
-        }, 200);
+    convert : function(bar){
+        var converted = [bar.timestamp, bar.price - 0];
+        return converted;
     }
+
 });
  
