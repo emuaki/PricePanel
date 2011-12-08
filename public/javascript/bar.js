@@ -67,6 +67,15 @@ BarPublisher.prototype = {
 
 $.jqplot.config.enablePlugins = true;
 
+var BarBasePanel = function(option){
+  
+};
+
+BarBasePanel.prototype = {
+    
+    
+};
+
 var TickPanel = function(option){
     this.initialize(option);
 };
