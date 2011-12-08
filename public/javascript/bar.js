@@ -6,7 +6,7 @@ util.extend = function(destination, source, override) {
             dest.prototype[property] = origin[property];
         }
     }
-    copy(destination, source);
+    copy(destination, source.prototype);
     copy(destination, override);
   
     return destination;
@@ -88,7 +88,58 @@ var BarBasePanel = function(option){
 
 BarBasePanel.prototype = {
     
+    getInitialData : function(){
+        var ret = null;
+        $.ajax({
+            async: false,
+            url: this.initialDataUrl + this.currencyPair,
+            dataType:"json",
+            success: function(data) {
+                ret = data;
+            }
+        });
+        
+        var result = [];
+        for (var i in ret){
+            result.push([ret[i].timestamp, ret[i].price -0]);
+        }
+        return [result];
+    },
     
+    add : function(bar){
+        this.data[0].push(bar);
+        this.adjust();
+        this.draw();
+    },
+    
+    adjust : function(){
+        var diff = this.data[0].length - this.maxDataSize;
+        if(diff < 0){
+            return;
+        }
+        for(var i=0; i < diff; i++){
+            this.data[0].shift();
+        }
+    }, 
+    
+    calcTickInterval: function(){
+        if(this.data[0].length <= 1){
+            return 0;
+        }
+        var first = this.data[0][0];
+        var length = this.data[0].length;
+        var last = this.data[0][length - 1];
+        
+        var firstDate = new Date(first[0]);
+        var lastDate = new Date(last[0]);
+        var interval = (lastDate.getTime() - firstDate.getTime()) / 1000;
+        var tickInterval = interval / this.gridSize;
+        return tickInterval;
+    },
+    
+    setTickInterval : function(interval){
+          this.jqplotOption.axes.xaxis.tickInterval = interval;
+    }    
 };
 
 var TickPanel = function(option){
@@ -96,7 +147,6 @@ var TickPanel = function(option){
 };
 
 util.extend(TickPanel, BarBasePanel, {
-
     
     initialDataUrl : "./barData?currencyPair=",
     
@@ -142,66 +192,13 @@ util.extend(TickPanel, BarBasePanel, {
             self.draw();
         }, 500);
     },
-    
-    getInitialData : function(){
-        var ret = null;
-        $.ajax({
-            async: false,
-            url: this.initialDataUrl + this.currencyPair,
-            dataType:"json",
-            success: function(data) {
-                ret = data;
-            }
-        });
-        
-        var result = [];
-        for (var i in ret){
-            result.push([ret[i].timestamp, ret[i].price -0]);
-        }
-        return [result];
-    },
-    
+     
     onBar : function(bar){
         if(bar.barType !== 0) return;
         var converted = [bar.timestamp, bar.price - 0];
         this.add(converted);
     },
     
-    add : function(bar){
-        this.data[0].push(bar);
-        this.adjust();
-        this.draw();
-    },
-    
-    adjust : function(){
-        var diff = this.data[0].length - this.maxDataSize;
-        if(diff < 0){
-            return;
-        }
-        for(var i=0; i < diff; i++){
-            this.data[0].shift();
-        }
-    }, 
-    
-    calcTickInterval: function(){
-        if(this.data[0].length <= 1){
-            return 0;
-        }
-        var first = this.data[0][0];
-        var length = this.data[0].length;
-        var last = this.data[0][length - 1];
-        
-        var firstDate = new Date(first[0]);
-        var lastDate = new Date(last[0]);
-        var interval = (lastDate.getTime() - firstDate.getTime()) / 1000;
-        var tickInterval = interval / this.gridSize;
-        return tickInterval;
-    },
-    
-    setTickInterval : function(interval){
-          this.jqplotOption.axes.xaxis.tickInterval = interval;
-    },
-
     draw : function(){
         if(!this.isReady){
             return;
