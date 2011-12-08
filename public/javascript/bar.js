@@ -1,15 +1,17 @@
 var util = {};
 util.extend = function(destination, source, override) {
-  for (var property in source) {
-    destination[property] = source[property];
-  }
+    
+    function copy(dest, origin){
+        for (var property in origin) {
+            dest.prototype[property] = origin[property];
+        }
+    }
+    copy(destination, source);
+    copy(destination, override);
   
-  for (var property in override) {
-    destination[property] = override[property];
-  }
-  console.log(destination);
-  return destination;
+    return destination;
 };
+
 
 var BarPublisher = function(socket, option){
     this.initialize(socket, option);
