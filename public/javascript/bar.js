@@ -150,7 +150,7 @@ BarBasePanel.prototype = {
             self.isReady = true;
             self.adjust();
             self.draw();
-        }, 100);
+        }, 500);
     },
     
     getInitialDataUrl : function(){
