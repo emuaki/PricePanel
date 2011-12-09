@@ -132,7 +132,7 @@ BarBasePanel.prototype = {
         
         var result = [];
         for (var i in ret){
-            result.push([ret[i].timestamp, ret[i].price -0]);
+            result.push(this.convert(ret[i]));
         }
         return [result];
     },
@@ -206,11 +206,23 @@ BarBasePanel.prototype = {
         setTimeout(function(){
             self.isReady = true;
         }, 200);
+    },
+    
+    convert : function(bar){
+        var converted = [
+            bar.timestamp, 
+            bar.openPrice - 0, 
+            bar.highPrice - 0, 
+            bar.lowPrice -0,
+            bar.closePrice -0
+        ];
+        return converted;
     }
     
 };
 
 var TickPanel = function(option){
+    this.data = {};
     this.initialize(option);
 };
 
@@ -249,6 +261,7 @@ util.extend(TickPanel, BarBasePanel, {
 });
  
 var OneMinPanel = function(option){
+    this.data = {};
     this.initialize(option);
 };
 
@@ -278,16 +291,6 @@ util.extend(OneMinPanel, BarBasePanel, {
             renderer:$.jqplot.OHLCRenderer, 
             rendererOptions:{ candleStick:true }            
         }]
-    },
-    
-    convert : function(bar){
-        var converted = [
-            bar.timestamp, 
-            bar.openPrice - 0, 
-            bar.highPrice - 0, 
-            bar.closePrice -0
-        ];
-        return converted;
     }
 
 });
