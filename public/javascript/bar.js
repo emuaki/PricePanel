@@ -96,7 +96,9 @@ BarTypeChanger.prototype = {
     },
     
     initialize : function(option){
-        this.elementId = option.elementId;
+        this.container = $(option.contaienrId);
+        this.tickButton = this.container.find(option.tickButtonId);
+        this.oneMinButton = this.container.find(option.oneMinButtonId);
     },
     
     create : function(){
@@ -104,7 +106,13 @@ BarTypeChanger.prototype = {
     },
     
     setupListener : function(){
+        this.tickButton.click(function(){
+            alert("tick button clicked");
+        });
         
+        this.oneMinButton.click(function(){
+            alert("oneMin button clicked");
+        });
     },
     
     onChange : function(){

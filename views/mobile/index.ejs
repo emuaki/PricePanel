@@ -57,7 +57,9 @@
         pricePublisher.addPriceListener(detailCurrencyPair, detailPanel);
 
         new BarTypeChanger({
-            elementId : "#barTypeChanger"
+            containerId : "#barTypeChanger",
+            tickButtonId : "tick",
+            oneMinButtonId : "oneMin"
         }).create();      
 
         tickPanel = new OneMinPanel({
