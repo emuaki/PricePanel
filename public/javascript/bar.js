@@ -115,16 +115,15 @@ BarTypeChanger.prototype = {
     },
     
     createBarPanel : function(){
-        this.panels[0] = new TickPanel({
+        var option = {
             elementId : "bar",
             currencyPair : this.currencyPair
-        });
-        
-        this.panels[1] = new OneMinPanel({
-            elementId : "bar",
-            currencyPair : this.currencyPair
-        });
-        
+        };
+        var tick = BarType.TICK;
+        this.panels[tick] = new TickPanel(option);
+        var oneMin = BarType.ONE_MIN;
+        this.panels[oneMin] = new OneMinPanel(option);
+    
         this.currentPanel = this.panels[0];
     },
     
