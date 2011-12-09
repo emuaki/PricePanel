@@ -86,7 +86,7 @@ var BarBasePanel = function(){};
 
 BarBasePanel.prototype = {
     
-    initialDataUrl : "./barData?currencyPair=",
+    initialDataUrl : "./barData",
     
     maxDataSize : 50,
     
@@ -106,6 +106,17 @@ BarBasePanel.prototype = {
             self.adjust();
             self.draw();
         }, 200);
+    },
+    
+    getInitialDataUrl(){
+        var url = [
+            this.initialDataUrl,
+            "?currencyPair=",
+            this.currencyPair,
+            "&barType=",
+            this.barType
+        ].join();
+        return url;
     },
     
     getInitialData : function(){
@@ -131,6 +142,13 @@ BarBasePanel.prototype = {
         var converted = this.convert(bar);
         this.add(converted);
     },
+    
+    isTargetBarType : function(bar){
+        if(bar.barType === this.barType){
+            return true;
+        }
+        return false;
+    },    
     
     add : function(bar){
         this.data[0].push(bar);
@@ -197,6 +215,8 @@ var TickPanel = function(option){
 
 util.extend(TickPanel, BarBasePanel, {
     
+    barType : 0,
+    
     jqplotOption : {
         axesDefaults: {
             showMark : false,
@@ -218,13 +238,6 @@ util.extend(TickPanel, BarBasePanel, {
         series:[{
             showMarker: false
         }]
-    },
-    
-    isTargetBarType : function(bar){
-        if(bar.barType === 0){
-            return true;
-        }
-        return false;
     },
     
     convert : function(bar){
@@ -240,6 +253,8 @@ var OneMinPanel = function(option){
 
 util.extend(OneMinPanel, BarBasePanel, {
     
+    barType : 1,
+    
     jqplotOption : {
         axesDefaults: {
             showMark : false,
@@ -259,19 +274,18 @@ util.extend(OneMinPanel, BarBasePanel, {
             }
         },
         series:[{
-            showMarker: false
+            renderer:$.jqplot.OHLCRenderer, 
+            rendererOptions:{ candleStick:true }            
         }]
     },
     
-    isTargetBarType : function(bar){
-        if(bar.barType === 1){
-            return true;
-        }
-        return false;
-    },
-    
     convert : function(bar){
-        var converted = [bar.timestamp, bar.price - 0];
+        var converted = [
+            bar.timestamp, 
+            bar.openPrice - 0, 
+            bar.highPrice - 0, 
+            bar.closePrice -0
+        ];
         return converted;
     }
 
