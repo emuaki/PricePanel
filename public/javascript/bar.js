@@ -105,6 +105,7 @@ BarTypeChanger.prototype = {
         this.oneMinButton = this.container.find(option.oneMinButtonId);
         this.currencyPair = option.currencyPair;
         this.barPublisher = option.barPublisher;
+        this.create();
     },
     
     create : function(){
