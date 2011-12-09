@@ -12,6 +12,10 @@ util.extend = function(destination, source, override) {
     return destination;
 };
 
+var BarType = {
+    TICK : 0,
+    ONE_MIN : 1
+};
 
 var BarPublisher = function(socket, option){
     this.initialize(socket, option);
@@ -79,10 +83,6 @@ BarPublisher.prototype = {
     }
 };
 
-var BarType = {
-    TICK : 0,
-    ONE_MIN : 1
-};
 
 var BarTypeChanger = function(option){
     this.initialize(option);
@@ -96,12 +96,19 @@ BarTypeChanger.prototype = {
     },
     
     initialize : function(option){
+        this.elementId = option.elementId;
         this.createElement();
         this.setupListener();
     },
     
     createElement : function(){
-        
+        var container = this.createContainer();
+        for(var i in BarType){
+            var barType = BarType[i];
+            var list = this.createList(this.text[barType]);
+            container.append(list);
+        }
+        $(this.elementId).append(container);
     },
     
     createContainer : function(){
@@ -115,8 +122,16 @@ BarTypeChanger.prototype = {
         return container;
     },
     
-    createList : function(){
-        
+    createList : function(buttonText){
+        var str = [
+            '<li>',
+            '<a href="#" data-role="button" class="ui-btn ui-btn-up-c"'>,
+            buttonText,
+            '</a>',
+            '</li>'
+        ].join("");
+        var list = $(str);
+        return list;
     },
     
     setupListener : function(){
