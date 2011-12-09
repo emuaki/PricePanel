@@ -87,6 +87,7 @@ var BarType = {
 var BarTypeChanger = function(option){
     this.initialize(option);
 };
+
 BarTypeChanger.prototype = {
     
     text : {
@@ -100,6 +101,21 @@ BarTypeChanger.prototype = {
     },
     
     createElement : function(){
+        
+    },
+    
+    createContainer : function(){
+        var str = [
+            '<ul data-role="controlgroup"',
+            ' data-type="horizontal"',
+            ' class="localnav ui-corner-all ui-controlgroup ui-controlgroup-horizontal">'
+            '</ul>'
+        ].join("");
+        var container = $(str);
+        return container;
+    },
+    
+    createList : function(){
         
     },
     
