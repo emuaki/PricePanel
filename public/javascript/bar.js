@@ -97,6 +97,9 @@ BarTypeChanger.prototype = {
     
     initialize : function(option){
         this.elementId = option.elementId;
+    },
+    
+    create : function(){
         this.createElement();
         this.setupListener();
     },
