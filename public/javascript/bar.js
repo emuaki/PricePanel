@@ -65,6 +65,8 @@ BarPublisher.prototype = {
     
     removeBarListener : function(currencyPair, listener){
         var listeners = this.listenerMap[currencyPair];
+        if(listeners === undefined) return;
+        
         for(var i in listeners){
             if(listeners[i] === listener){
                 listeners.splice(i, 1);
@@ -99,9 +101,9 @@ BarTypeChanger.prototype = {
     
     initialize : function(option){
         this.container = $(option.containerId);
-        this.currencyPair = option.currencyPair;
         this.tickButton = this.container.find(option.tickButtonId);
         this.oneMinButton = this.container.find(option.oneMinButtonId);
+        this.currencyPair = option.currencyPair;
         this.barPublisher = option.barPublisher;
     },
     
@@ -178,6 +180,7 @@ BarBasePanel.prototype = {
         var self = this;
         setTimeout(function(){
             self.initialized = true;
+            self.isReady = true;
             self.adjust();
             self.draw();
         }, 500);  
