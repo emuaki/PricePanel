@@ -102,12 +102,12 @@ BarTypeChanger.prototype = {
         this.currencyPair = option.currencyPair;
         this.tickButton = this.container.find(option.tickButtonId);
         this.oneMinButton = this.container.find(option.oneMinButtonId);
-        
     },
     
     create : function(){
         this.createBarPanel();
         this.setupListener();
+        this.currentPanel.draw();
     },
     
     createBarPanel : function(){
@@ -136,11 +136,9 @@ BarTypeChanger.prototype = {
     },
     
     onChange : function(barType){
-        
-    },
-    
-    doChange : function(){
-        
+        this.currentPanel.destroy();
+        this.panels[barType].draw();
+        this.currentPanel = this.panels[barType];
     }
     
 };
@@ -164,13 +162,16 @@ BarBasePanel.prototype = {
     initialize : function(option){
         this.currencyPair = option.currencyPair;
         this.elementId = option.elementId;
+    },
+    
+    ifNotGetData : function(){
         this.data = this.getInitialData();
         var self = this;
         setTimeout(function(){
-            self.isReady = true;
+            self.initialized = true;
             self.adjust();
             self.draw();
-        }, 500);
+        }, 500);  
     },
     
     getInitialDataUrl : function(){
@@ -251,6 +252,9 @@ BarBasePanel.prototype = {
     },
     
     draw : function(){
+        if(!initialized){
+            this.ifNotGetData();   
+        }
         if(!this.isReady){
             return;
         }
@@ -260,13 +264,10 @@ BarBasePanel.prototype = {
         this.setTickInterval(this.calcTickInterval());
         this.isReady = false;
         console.log(this.data);
-        if(! this.initialized){
-            this.plot = $.jqplot('bar', this.data, this.jqplotOption);
-            this.initialized = true;
-        }else{
-            this.plot.destroy();
-            this.plot = $.jqplot('bar', this.data, this.jqplotOption);
-        }
+     
+        if(this.plot !== undefined) this.plot.destroy();
+        this.plot = $.jqplot('bar', this.data, this.jqplotOption);
+     
         var self = this;
         setTimeout(function(){
             self.isReady = true;
@@ -282,6 +283,11 @@ BarBasePanel.prototype = {
             bar.closePrice -0
         ];
         return converted;
+    },
+    
+    destroy : function(){
+       if(this.plot === undefined) return;
+       this.plot.destroy();
     }
     
 };
