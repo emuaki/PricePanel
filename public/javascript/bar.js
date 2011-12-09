@@ -121,8 +121,11 @@ BarTypeChanger.prototype = {
         };
         var tick = BarType.TICK;
         this.panels[tick] = new TickPanel(option);
+        barPublisher.addBarListener(this.currencyPair, this.panels[tick]);
+
         var oneMin = BarType.ONE_MIN;
         this.panels[oneMin] = new OneMinPanel(option);
+        barPublisher.addBarListener(this.currencyPair, this.panels[oneMin]);
     
         this.currentPanel = this.panels[0];
     },
@@ -140,9 +143,7 @@ BarTypeChanger.prototype = {
     
     onChange : function(barType){
         this.currentPanel.destroy();
-        barPublisher.removeBarListener(this.currencyPair, this.currentPanel);
         this.panels[barType].draw();
-        barPublisher.addBarListener(this.currencyPair, this.panels[barType]);
         this.currentPanel = this.panels[barType];
     },
     
