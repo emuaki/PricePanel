@@ -102,6 +102,7 @@ BarTypeChanger.prototype = {
         this.currencyPair = option.currencyPair;
         this.tickButton = this.container.find(option.tickButtonId);
         this.oneMinButton = this.container.find(option.oneMinButtonId);
+        this.barPublisher = option.barPublisher;
     },
     
     create : function(){
@@ -114,12 +115,14 @@ BarTypeChanger.prototype = {
         this.panels[0] = new TickPanel({
             elementId : "bar",
             currencyPair : this.currencyPair
-        });  
+        });
+        barPublisher.addBarListener(this.currencyPair, this.panels[0]);
         
         this.panels[1] = new OneMinPanel({
             elementId : "bar",
             currencyPair : this.currencyPair
         });
+        barPublisher.addBarListener(this.currencyPair, this.panels[1]);
         
         this.currentPanel = this.panels[0];
     },
@@ -139,6 +142,12 @@ BarTypeChanger.prototype = {
         this.currentPanel.destroy();
         this.panels[barType].draw();
         this.currentPanel = this.panels[barType];
+    },
+    
+    clear : function(){
+        for(var i in this.panels){
+            this.barPublisher.removeBarListener(this.currencyPair, this.panels[i]);
+        }
     }
     
 };
@@ -252,7 +261,7 @@ BarBasePanel.prototype = {
     },
     
     draw : function(){
-        if(!initialized){
+        if(!this.initialized){
             this.ifNotGetData();   
         }
         if(!this.isReady){

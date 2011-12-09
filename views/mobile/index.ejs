@@ -44,11 +44,12 @@
             "status" : "#connectionStatus",
             "transport" : "#connectionTransport"
         }).start();
+
       });
 
       var detailPanel = null;
       var detailCurrencyPair = null;
-      var tickPanel = null;
+      var barTypeChanger = null;
       $("#detail").live("pageshow", function(event){
         var param = $.mobile.path.parseUrl(event.target.baseURI).search;
         param.match(/currencyPair=(.*)/);
@@ -56,18 +57,18 @@
         detailPanel = new DetailPricePanel({currencyPair : detailCurrencyPair });
         pricePublisher.addPriceListener(detailCurrencyPair, detailPanel);
 
-        new BarTypeChanger({
+        barTypeChanger = new BarTypeChanger({
             containerId : "#barTypeChanger",
             tickButtonId : ".tick",
-            oneMinButtonId : ".oneMin"
+            oneMinButtonId : ".oneMin",
+            barPublisher : barPublisher
         }).create();      
-
-        barPublisher.addBarListener(detailCurrencyPair, tickPanel);
+        
       });
       
       $("#detail").live("pageremove", function(event){
         pricePublisher.removePriceListener(detailCurrencyPair, detailPanel);
-        barPublisher.removeBarListener(detailCurrencyPair, tickPanel);
+        barTypeChanger.clear();
       });
       
       socket.on('chatMessage', function (data) {
