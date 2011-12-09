@@ -79,6 +79,43 @@ BarPublisher.prototype = {
     }
 };
 
+var BarType = {
+    TICK : 0,
+    ONE_MIN : 1
+};
+
+var BarTypeChanger = function(option){
+    this.initialize(option);
+};
+BarTypeChanger.prototype = {
+    
+    text : {
+        BarType.TICK : "Tick",
+        BarType.ONE_MIN: "1分足"
+    },
+    
+    initialize : function(option){
+        this.createElement();
+        this.setupListener();
+    },
+    
+    createElement : function(){
+        
+    },
+    
+    setupListener : function(){
+        
+    },
+    
+    onChange : function(){
+        
+    },
+    
+    doChange : function(){
+        
+    }
+    
+};
 
 $.jqplot.config.enablePlugins = true;
 
@@ -105,7 +142,7 @@ BarBasePanel.prototype = {
             self.isReady = true;
             self.adjust();
             self.draw();
-        }, 200);
+        }, 100);
     },
     
     getInitialDataUrl : function(){
@@ -213,7 +250,7 @@ BarBasePanel.prototype = {
             bar.timestamp, 
             bar.openPrice - 0, 
             bar.highPrice - 0, 
-            bar.lowPrice -0,
+            bar.lowPrice - 0,
             bar.closePrice -0
         ];
         return converted;
@@ -228,7 +265,7 @@ var TickPanel = function(option){
 
 util.extend(TickPanel, BarBasePanel, {
     
-    barType : 0,
+    barType : BarType.TICK,
     
     jqplotOption : {
         axesDefaults: {
@@ -267,7 +304,7 @@ var OneMinPanel = function(option){
 
 util.extend(OneMinPanel, BarBasePanel, {
     
-    barType : 1,
+    barType : BarType.ONE_MIN,
     
     jqplotOption : {
         axesDefaults: {
