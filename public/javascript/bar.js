@@ -111,6 +111,7 @@ BarTypeChanger.prototype = {
     create : function(){
         this.createBarPanel();
         this.setupListener();
+        this.currentPanel.isShow = true;
         this.currentPanel.draw();
     },
     
@@ -142,7 +143,9 @@ BarTypeChanger.prototype = {
     },
     
     onChange : function(barType){
+        this.currentPanel.isShow = false;
         this.currentPanel.destroy();
+        this.panels[barType].isShow = true;
         this.panels[barType].draw();
         this.currentPanel = this.panels[barType];
     },
@@ -170,6 +173,8 @@ BarBasePanel.prototype = {
     isReady : false,
     
     initialized : false,
+    
+    isShow : false,
     
     initialize : function(option){
         this.currencyPair = option.currencyPair;
@@ -265,6 +270,9 @@ BarBasePanel.prototype = {
     },
     
     draw : function(){
+        if(!this.isShow){
+            return;
+        }
         if(!this.initialized){
             this.ifNotGetData();   
         }
