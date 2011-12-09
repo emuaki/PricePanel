@@ -108,7 +108,7 @@ BarBasePanel.prototype = {
         }, 200);
     },
     
-    getInitialDataUrl(){
+    getInitialDataUrl : function(){
         var url = [
             this.initialDataUrl,
             "?currencyPair=",
