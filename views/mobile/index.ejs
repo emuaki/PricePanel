@@ -55,7 +55,7 @@
         detailCurrencyPair = RegExp.$1;
         detailPanel = new DetailPricePanel({currencyPair : detailCurrencyPair });
         pricePublisher.addPriceListener(detailCurrencyPair, detailPanel);
-        tickPanel = new TickPanel({
+        tickPanel = new OneMinPanel({
             elementId : "bar",
             currencyPair : detailCurrencyPair
         });

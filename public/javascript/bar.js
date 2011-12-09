@@ -115,7 +115,7 @@ BarBasePanel.prototype = {
             this.currencyPair,
             "&barType=",
             this.barType
-        ].join();
+        ].join("");
         return url;
     },
     
@@ -123,7 +123,7 @@ BarBasePanel.prototype = {
         var ret = null;
         $.ajax({
             async: false,
-            url: this.initialDataUrl + this.currencyPair,
+            url: this.getInitialDataUrl(),
             dataType:"json",
             success: function(data) {
                 ret = data;
@@ -194,6 +194,7 @@ BarBasePanel.prototype = {
         }
         this.setTickInterval(this.calcTickInterval());
         this.isReady = false;
+        console.log(this.data);
         if(! this.initialized){
             this.plot = $.jqplot('bar', this.data, this.jqplotOption);
             this.initialized = true;
