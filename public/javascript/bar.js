@@ -110,7 +110,7 @@ BarTypeChanger.prototype = {
             var link = this.createLink(this.text[i]);
             container.append(link);
         }
-        $(this.elementId).append(container).page();
+        container.appendTo($(this.elementId)).page();
     },
     
     createContainer : function(){
