@@ -55,16 +55,16 @@
         detailCurrencyPair = RegExp.$1;
         detailPanel = new DetailPricePanel({currencyPair : detailCurrencyPair });
         pricePublisher.addPriceListener(detailCurrencyPair, detailPanel);
-        tickPanel = new OneMinPanel({
-            elementId : "bar",
-            currencyPair : detailCurrencyPair
-        });
-        barPublisher.addBarListener(detailCurrencyPair, tickPanel);
 
         new BarTypeChanger({
             elementId : "#barTypeChanger"
         }).create();      
 
+        tickPanel = new OneMinPanel({
+            elementId : "bar",
+            currencyPair : detailCurrencyPair
+        });
+        barPublisher.addBarListener(detailCurrencyPair, tickPanel);
       });
       
       $("#detail").live("pageremove", function(event){

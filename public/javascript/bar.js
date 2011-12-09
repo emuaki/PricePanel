@@ -100,38 +100,7 @@ BarTypeChanger.prototype = {
     },
     
     create : function(){
-        this.createElement();
         this.setupListener();
-    },
-    
-    createElement : function(){
-        var container = this.createContainer();
-        for(var i in BarType){
-            var link = this.createLink(this.text[i]);
-            container.append(link);
-        }
-        container.appendTo($(this.elementId)).page();
-    },
-    
-    createContainer : function(){
-        var str = [
-            '<div data-role="controlgroup"',
-            ' data-type="horizontal"',
-            ' >',
-            '</div>'
-        ].join("");
-        var container = $(str);
-        return container;
-    },
-    
-    createLink : function(buttonText){
-        var str = [
-            '<a href="#" data-role="button" data-theme="c">',
-            buttonText,
-            '</a>'
-        ].join("");
-        var link = $(str);
-        return link;
     },
     
     setupListener : function(){
