@@ -60,6 +60,10 @@
             currencyPair : detailCurrencyPair
         });
         barPublisher.addBarListener(detailCurrencyPair, tickPanel);
+
+        new BarTypeChanger({
+            elementId : "barTypeChanger"
+        }).create();      
       });
       
       $("#detail").live("pageremove", function(event){
