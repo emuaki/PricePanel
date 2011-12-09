@@ -116,13 +116,11 @@ BarTypeChanger.prototype = {
             elementId : "bar",
             currencyPair : this.currencyPair
         });
-        barPublisher.addBarListener(this.currencyPair, this.panels[0]);
         
         this.panels[1] = new OneMinPanel({
             elementId : "bar",
             currencyPair : this.currencyPair
         });
-        barPublisher.addBarListener(this.currencyPair, this.panels[1]);
         
         this.currentPanel = this.panels[0];
     },
@@ -140,11 +138,13 @@ BarTypeChanger.prototype = {
     
     onChange : function(barType){
         this.currentPanel.destroy();
+        barPublisher.removeBarListener(this.currencyPair, this.currentPanel);
         this.panels[barType].draw();
+        barPublisher.addBarListener(this.currencyPair, this.panels[barType]);
         this.currentPanel = this.panels[barType];
     },
     
-    clear : function(){
+    removeBarListener : function(){
         for(var i in this.panels){
             this.barPublisher.removeBarListener(this.currencyPair, this.panels[i]);
         }

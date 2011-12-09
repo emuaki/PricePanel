@@ -68,7 +68,7 @@
       
       $("#detail").live("pageremove", function(event){
         pricePublisher.removePriceListener(detailCurrencyPair, detailPanel);
-        barTypeChanger.clear();
+        barTypeChanger.removeBarListener();
       });
       
       socket.on('chatMessage', function (data) {
