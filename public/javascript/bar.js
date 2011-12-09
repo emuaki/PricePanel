@@ -90,32 +90,52 @@ var BarTypeChanger = function(option){
 
 BarTypeChanger.prototype = {
     
+    panels : {},
+    
     text : {
         TICK : "Tick",
         ONE_MIN: "1分足"
     },
     
     initialize : function(option){
-        this.container = $(option.contaienrId);
+        this.container = $(option.containerId);
+        this.currencyPair = option.currencyPair;
         this.tickButton = this.container.find(option.tickButtonId);
         this.oneMinButton = this.container.find(option.oneMinButtonId);
+        
     },
     
     create : function(){
+        this.createBarPanel();
         this.setupListener();
     },
     
+    createBarPanel : function(){
+        this.panels[0] = new TickPanel({
+            elementId : "bar",
+            currencyPair : this.currencyPair
+        });  
+        
+        this.panels[1] = new OneMinPanel({
+            elementId : "bar",
+            currencyPair : this.currencyPair
+        });
+        
+        this.currentPanel = this.panels[0];
+    },
+    
     setupListener : function(){
+        var self = this;
         this.tickButton.click(function(){
-            alert("tick button clicked");
+            self.onChange(BarType.TICK);
         });
         
         this.oneMinButton.click(function(){
-            alert("oneMin button clicked");
+            self.onChange(BarType.ONE_MIN);
         });
     },
     
-    onChange : function(){
+    onChange : function(barType){
         
     },
     

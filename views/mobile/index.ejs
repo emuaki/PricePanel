@@ -49,7 +49,7 @@
       var detailPanel = null;
       var detailCurrencyPair = null;
       var tickPanel = null;
-      $("#detail").live("pageinit", function(event){
+      $("#detail").live("pageshow", function(event){
         var param = $.mobile.path.parseUrl(event.target.baseURI).search;
         param.match(/currencyPair=(.*)/);
         detailCurrencyPair = RegExp.$1;
@@ -62,10 +62,6 @@
             oneMinButtonId : ".oneMin"
         }).create();      
 
-        tickPanel = new OneMinPanel({
-            elementId : "bar",
-            currencyPair : detailCurrencyPair
-        });
         barPublisher.addBarListener(detailCurrencyPair, tickPanel);
       });
       
