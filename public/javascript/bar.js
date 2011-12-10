@@ -183,7 +183,8 @@ BarBasePanel.prototype = {
     getInitialData : function(){
         this.data = this.doGetInitialData();
         this.adjust();
-        self.isDataLoaded= true;
+        this.isDataLoaded= true;
+        this.isReady = true;
     },
     
     getInitialDataUrl : function(){
@@ -277,16 +278,20 @@ BarBasePanel.prototype = {
     
     isDraw : function(){
         if(!this.isReady){
-            return;
+            return false;
         }
-        if(this.data.length <= 0){
-            return;
-        }  
+        if(this.data[0].length <= 0){
+            return false;
+        }
+        return true;
     },
     
     draw : function(){
-        if(!isDataLoaded){
+        if(!this.isDataLoaded){
             this.getInitialData();   
+        }
+        if(!this.isDraw()){
+            return;
         }
         
         console.log(this.data);
