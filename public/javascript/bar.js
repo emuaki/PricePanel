@@ -143,9 +143,8 @@ BarTypeChanger.prototype = {
     },
     
     onChange : function(barType){
-        this.currentPanel.isShow = false;
-        this.currentPanel.destroy();
-        this.panels[barType].isShow = true;
+        this.currentPanel.hide();
+        this.panels[barType].show();
         this.panels[barType].draw();
         this.currentPanel = this.panels[barType];
     },
@@ -172,7 +171,7 @@ BarBasePanel.prototype = {
     
     isReady : false,
     
-    initialized : false,
+    isDataLoaded : false,
     
     isShow : false,
     
@@ -181,15 +180,10 @@ BarBasePanel.prototype = {
         this.elementId = option.elementId;
     },
     
-    ifNotGetData : function(){
-        this.data = this.getInitialData();
-        var self = this;
-        setTimeout(function(){
-            self.initialized = true;
-            self.isReady = true;
-            self.adjust();
-            self.draw();
-        }, 500);  
+    getInitialData : function(){
+        this.data = this.doGetInitialData();
+        this.adjust();
+        self.isDataLoaded= true;
     },
     
     getInitialDataUrl : function(){
@@ -203,7 +197,7 @@ BarBasePanel.prototype = {
         return url;
     },
     
-    getInitialData : function(){
+    doGetInitialData : function(){
         var ret = null;
         $.ajax({
             async: false,
@@ -237,12 +231,13 @@ BarBasePanel.prototype = {
     add : function(bar){
         this.data[0].push(bar);
         this.adjust();
+        if(!this.isShow) return;
         this.draw();
     },
     
     adjust : function(){
         var diff = this.data[0].length - this.maxDataSize;
-        if(diff < 0){
+        if(diff <= 0){
             return;
         }
         for(var i=0; i < diff; i++){
@@ -269,11 +264,18 @@ BarBasePanel.prototype = {
         this.jqplotOption.axes.xaxis.tickInterval = interval;
     },
     
+    show : function(){
+        this.isShow = true;
+        this.draw();
+    },
+    
+    hide : function(){
+        this.isShow = false;
+        if(this.plot === undefined) return;
+        this.plot.destroy();        
+    },
+    
     isDraw : function(){
-        if(!this.isShow){
-            return;
-        }
-
         if(!this.isReady){
             return;
         }
@@ -283,15 +285,16 @@ BarBasePanel.prototype = {
     },
     
     draw : function(){
-        if(!this.initialized){
-            this.ifNotGetData();   
+        if(!isDataLoaded){
+            this.getInitialData();   
         }
+        
+        console.log(this.data);
+
         this.setTickInterval(this.calcTickInterval());
         this.isReady = false;
-        console.log(this.data);
-     
         if(this.plot !== undefined) this.plot.destroy();
-        this.plot = $.jqplot('bar', this.data, this.jqplotOption);
+        this.plot = $.jqplot(this.elementId, this.data, this.jqplotOption);
      
         var self = this;
         setTimeout(function(){
@@ -308,11 +311,6 @@ BarBasePanel.prototype = {
             bar.closePrice - 0
         ];
         return converted;
-    },
-    
-    destroy : function(){
-       if(this.plot === undefined) return;
-       this.plot.destroy();
     }
     
 };
