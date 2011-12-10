@@ -111,8 +111,7 @@ BarTypeChanger.prototype = {
     create : function(){
         this.createBarPanel();
         this.setupListener();
-        this.currentPanel.isShow = true;
-        this.currentPanel.draw();
+        this.currentPanel.show();
     },
     
     createBarPanel : function(){
@@ -145,7 +144,6 @@ BarTypeChanger.prototype = {
     onChange : function(barType){
         this.currentPanel.hide();
         this.panels[barType].show();
-        this.panels[barType].draw();
         this.currentPanel = this.panels[barType];
     },
     
