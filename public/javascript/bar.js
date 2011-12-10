@@ -269,18 +269,22 @@ BarBasePanel.prototype = {
         this.jqplotOption.axes.xaxis.tickInterval = interval;
     },
     
-    draw : function(){
+    isDraw : function(){
         if(!this.isShow){
             return;
         }
-        if(!this.initialized){
-            this.ifNotGetData();   
-        }
+
         if(!this.isReady){
             return;
         }
         if(this.data.length <= 0){
             return;
+        }  
+    },
+    
+    draw : function(){
+        if(!this.initialized){
+            this.ifNotGetData();   
         }
         this.setTickInterval(this.calcTickInterval());
         this.isReady = false;
@@ -301,7 +305,7 @@ BarBasePanel.prototype = {
             bar.openPrice - 0, 
             bar.highPrice - 0, 
             bar.lowPrice - 0,
-            bar.closePrice -0
+            bar.closePrice - 0
         ];
         return converted;
     },
