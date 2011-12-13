@@ -163,7 +163,7 @@ BarBasePanel.prototype = {
     
     initialDataUrl : "./barData",
     
-    maxDataSize : 50,
+    maxDataSize : 30,
     
     gridSize : 5,
     
