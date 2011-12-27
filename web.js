@@ -1,3 +1,3 @@
-require.paths.push('lib');
+require.paths.push('app');
 console.log(require.paths);
 require('bootstrap');

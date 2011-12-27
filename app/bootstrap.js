@@ -7,6 +7,8 @@ var ejs = require('ejs'),
     stylus = require('stylus') ,
     nib = require('nib');
 
+console.log(__dirname);
+
 app.use(express.static(__dirname + '/../public'));
 function compile(str, path){
     console.log(path);
@@ -18,7 +20,7 @@ function compile(str, path){
 app.use(stylus.middleware({src: __dirname + '/../public', compile: compile}));
 app.set('view engine', 'ejs');
 app.set('view options', { layout: false });
-app.set('views', __dirname + '/../views');
+app.set('views', __dirname + '/views');
 
 var config = require('config').create(app, io);
 config.configure();
@@ -45,7 +47,7 @@ clientSessionManager.start();
 
 
 app.get('/', function(req, res){
-    res.render('mobile/index.ejs', {
+    res.render('views/mobile/index.ejs', {
         locals: {
             hostname : config.hostname,
             priceSettings : priceSettings
@@ -54,7 +56,7 @@ app.get('/', function(req, res){
 });
 
 app.get('/mobile', function(req, res){
-    res.render('mobile/index.ejs', {
+    res.render('views/mobile/index.ejs', {
         locals: {
             hostname : config.hostname,
             priceSettings : priceSettings
@@ -65,7 +67,7 @@ app.get('/mobile', function(req, res){
 app.get('/detail', function(req, res){
     var currencyPair = req.query.currencyPair;
     var key = currencyPair.replace("/", "");
-    res.render('mobile/detail.ejs', {
+    res.render('views/mobile/detail.ejs', {
         locals: {
             hostname : config.hostname,
             priceSettings : priceSettings,
