@@ -37,13 +37,13 @@ pricePublisher.start();
 var barManager = require('bar/manager').create(rateSource);
 barManager.start();
 
-var clientSessionManager = require('session_manager').create({
+var sessionManager = require('session_manager').create({
     io : io, 
     pricePublisher : pricePublisher,
     barPublisher : barManager
 });
 
-clientSessionManager.start();
+sessionManager.start();
 
 
 app.get('/', function(req, res){
