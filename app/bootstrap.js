@@ -37,7 +37,7 @@ pricePublisher.start();
 var barManager = require('bar/manager').create(rateSource);
 barManager.start();
 
-var clientSessionManager = require('client_session_manager').create({
+var clientSessionManager = require('session_manager').create({
     io : io, 
     pricePublisher : pricePublisher,
     barPublisher : barManager
@@ -47,7 +47,7 @@ clientSessionManager.start();
 
 
 app.get('/', function(req, res){
-    res.render('views/mobile/index.ejs', {
+    res.render('mobile/index.ejs', {
         locals: {
             hostname : config.hostname,
             priceSettings : priceSettings
@@ -56,7 +56,7 @@ app.get('/', function(req, res){
 });
 
 app.get('/mobile', function(req, res){
-    res.render('views/mobile/index.ejs', {
+    res.render('mobile/index.ejs', {
         locals: {
             hostname : config.hostname,
             priceSettings : priceSettings
@@ -67,7 +67,7 @@ app.get('/mobile', function(req, res){
 app.get('/detail', function(req, res){
     var currencyPair = req.query.currencyPair;
     var key = currencyPair.replace("/", "");
-    res.render('views/mobile/detail.ejs', {
+    res.render('mobile/detail.ejs', {
         locals: {
             hostname : config.hostname,
             priceSettings : priceSettings,
