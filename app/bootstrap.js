@@ -27,15 +27,14 @@ config.configure();
 
 var priceSettings = require('price_settings').values;
 
-
-
+require('services/price_service').getService().start();
 
 var barManager = require('bar/manager').create(rateSource);
 barManager.start();
 
+
 var sessionManager = require('session_manager').create({
     io : io, 
-    pricePublisher : pricePublisher,
     barPublisher : barManager
 });
 

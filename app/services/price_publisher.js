@@ -1,14 +1,13 @@
 var util = require('util'),
     events = require('events');
 
-var PricePublisher = function(io, rateSource){
-    this.initialize(io, rateSource);
+var PricePublisher = function(rateSource){
+    this.initialize(rateSource);
 };
 
 util.inherits(PricePublisher, events.EventEmitter);
 
-PricePublisher.prototype.initialize = function(io, rateSource){
-    this.io = io;
+PricePublisher.prototype.initialize = function(rateSource){
     this.rateSource = rateSource;
     this.priceCacher = require('price_cacher').create();
 };
