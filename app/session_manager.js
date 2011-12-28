@@ -42,7 +42,6 @@ SessionManager.prototype = {
                 self.removeSession(socket.id);
             });
         });
-        
     },
     
     createSessionStore : function(socket){
@@ -67,6 +66,4 @@ SessionManager.prototype = {
 exports.create = function(){
     return new SessionManager(arguments[0], arguments[1]);   
 };
-
-
 
