@@ -12,7 +12,6 @@ PriceService.prototype = {
     },
     
     start : function(){
-
         this.pricePublisher.start();
     }
 
