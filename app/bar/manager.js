@@ -3,15 +3,15 @@ var calculator = require('bar/calculator'),
     events = require('events'),
     BarType = require('bar/bar').BarType;
 
-var BarManager = function(rateSource){    
-    this.initialize(rateSource);
+var BarManager = function(){    
+    this.initialize();
 };
 
 util.inherits(BarManager, events.EventEmitter);
 BarManager.prototype.calculators  = {};
     
-BarManager.prototype.initialize = function(rateSource){
-    this.rateSource = rateSource;
+BarManager.prototype.initialize = function(){
+    this.rateSource = require('services/price_service').getService().rateSource;
 };
 
     

@@ -29,7 +29,7 @@ var priceSettings = require('price_settings').values;
 
 require('services/price_service').getService().start();
 
-var barManager = require('bar/manager').create(rateSource);
+var barManager = require('bar/manager').create();
 barManager.start();
 
 
