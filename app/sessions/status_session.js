@@ -8,7 +8,6 @@ StatusSession.prototype = {
     initialize : function(args){
         this.socket = args.socket;
         this.id = this.socket.id;
-        this.sessionManager = args.sessionManager;
         this.service = require('services/status_service').getService();
         this.service.plusConnectionCount();
         this.initialSend();

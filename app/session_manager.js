@@ -1,91 +1,22 @@
-
-var ClientSession = function(args){
-    this.initialize(args);
+var SessionStore = function(option){
+    this.sessions = {};
+    this.initialize(option);
 };
 
-ClientSession.prototype = {
+SessionStore.prototype = {
     
     initialize : function(args){
-        this.socket = args.socket;
-        this.id = this.socket.id;
-        this.sessionManager = args.sessionManager;
-        this.initialSend();
-        this.setupPriceListener();
-        this.setupBarListener();
-        this.setupChatListener();
+        this.id = args.socket.id;
     },
-    
-    getPricePublisher : function(){
-        return this.sessionManager.pricePublisher;
-    },
-    
-    getBarPublisher : function(){
-        return this.sessionManager.barPublisher;
-    },
-    
-    initialSend : function(){
-        var transport = "";
-        if(this.socket.transport){
-            transport = this.socket.transport;
-        }
-        this.socket.emit('notification', { 
-            message : 'connected',
-            connectionCount: this.sessionManager.connectionCount,
-            transport : transport
-        });
 
-        this.socket.emit('price', this.getPricePublisher().latestPrices());
-    },
+    add : function(key, session){
+        this.sessions[key] = session;
+    }, 
     
-    setupChatListener : function(){
-        var self = this;
-        this.socket.on('chatMessage', function (data) {
-            console.log('I received a private message by ', data);
-            self.socket.emit('chatMessage',{message:data.message});
-            self.socket.broadcast.emit('chatMessage', { message : data.message });
-        });
-    },
-    
-    setupPriceListener : function(){
-        var self = this;
-        this.getPricePublisher().on('price', function(prices){
-            self.socket.emit('price', prices);
-        });
-    },
-    
-    subscribeBarCurrencies : [],
-    
-    isBarPublishTarget : function(bar){
-        for(var i in this.subscribeBarCurrencies){
-            var ccy = this.subscribeBarCurrencies[i];
-            if(bar.currencyPair == ccy){
-                return true;
-            }
-        }
-        return false;
-    },
-    
-    setupBarListener : function(){
-        var self = this;
-        var callback = function(bar){
-            if(! self.isBarPublishTarget(bar)){
-                return;
-            }
-            self.socket.emit('bar', bar);
-        };
-        this.socket.on('barSubscribe', function(currencies){
-            self.subscribeBarCurrencies = currencies;
-            self.getBarPublisher().on('bar', callback);
-        });
-        
-        this.socket.on('barUnsubscribe', function(){
-            self.subscribeBarCurrencies = [];
-            self.getBarPublisher().removeListener('bar', callback);
-        });
+    get : function(key){
+        return this.sessions[key];   
     }
-    
 };
-
 
 
 var SessionManager = function(option){
@@ -106,32 +37,31 @@ SessionManager.prototype = {
     start : function(){
         var self = this;
         self.io.sockets.on('connection', function (socket) {
-
-            self.connectionCount++;
-            self.addSession(new ClientSession({socket: socket, sessionManager : self}));
-            socket.broadcast.emit('connectionCountChange', { 
-                message : 'connected',
-                connectionCount: self.connectionCount
-            });
-            
+            self.addSession(this.createSessionStore(socket));
             socket.on('disconnect', function(){
                 self.removeSession(socket.id);
-                socket.broadcast.emit('connectionCountChange', { 
-                    message : 'disconnected',
-                    connectionCount: self.connectionCount
-                });
             });
         });
         
     },
     
-    addSession : function(session){
-        this.sessions[session.id] = session;
+    createSessionStore : function(socket){
+        var sessionStore = new SessionStore({socket: socket});
+        sessionStore.add("PriceSession", require('sessions/price_session').create({socket: socket, sessionManager : this}));
+        sessionStore.add("BarSession", require('sessions/bar_session').create({socket: socket, sessionManager : this}));
+        sessionStore.add("StatusSession", require('sessions/status_session').create({socket: socket}));
+        sessionStore.add("ChatSession", require('sessions/chat_session').create({socket: socket}));       
+        return sessionStore;
+    },
+    
+    addSession : function(sessionStore){
+        this.sessions[sessionStore.id] = sessionStore;
     },
     
     removeSession : function(id){
         delete this.sessions[id];
     }
+
 };
 
 exports.create = function(){

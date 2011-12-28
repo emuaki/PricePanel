@@ -8,7 +8,6 @@ ChatSession.prototype = {
     initialize : function(args){
         this.socket = args.socket;
         this.id = this.socket.id;
-        this.sessionManager = args.sessionManager;
         this.setupListener();
     },
 
