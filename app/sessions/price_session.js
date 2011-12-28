@@ -8,13 +8,13 @@ PriceSession.prototype = {
     initialize : function(args){
         this.socket = args.socket;
         this.id = this.socket.id;
-        this.sessionManager = args.sessionManager;
+        this.service = require('services/price_service').getService();
         this.setupPriceListener();
         this.socket.emit('price', this.getPublisher().latestPrices());
     },
     
     getPublisher : function(){
-        return this.sessionManager.pricePublisher;
+        return this.service.pricePublisher;
     },
 
     setupPriceListener : function(){

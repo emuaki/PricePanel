@@ -25,7 +25,7 @@ app.set('views', __dirname + '/views');
 var config = require('config').create(app, io);
 config.configure();
 
-var priceSettings = require('price_settings').values;
+var priceSettings = require('models/price_settings').values;
 
 require('services/price_service').getService().start();
 

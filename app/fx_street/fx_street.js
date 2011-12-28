@@ -108,7 +108,7 @@ FxStreet.prototype.convert = function(data){
     original.match(/(\d{2})\.(\d{2})\.(\d{4}).*?(\d{2}):(\d{2})\:(\d{2})/);
     var timestamp = RegExp.$2 + "/" + RegExp.$1  + "/" + RegExp.$3 + " " + RegExp.$4 + ":" + RegExp.$5 + ":" + RegExp.$6;
     timestamp = DateUtil.format(DateUtil.addHour(new Date(timestamp), 8));
-    var price = require('price').create({
+    var price = require('models/price').create({
         currencyPair : this.getCurrencyPair(data.channel),
         bid : data.data.bid,
         ask : data.data.ask,

@@ -9,7 +9,7 @@ util.inherits(PricePublisher, events.EventEmitter);
 
 PricePublisher.prototype.initialize = function(rateSource){
     this.rateSource = rateSource;
-    this.priceCacher = require('price_cacher').create();
+    this.priceCacher = require('services/price_cacher').create();
 };
 
 PricePublisher.prototype.start = function(){
