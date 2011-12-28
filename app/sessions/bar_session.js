@@ -42,7 +42,7 @@ BarSession.prototype = {
         });
         
         this.socket.on('barUnsubscribe', function(){
-            self.subscribeBarCurrencies = [];
+            self.subscribeCurrencies = [];
             self.getPublisher().removeListener('bar', callback);
         });
     }
