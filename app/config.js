@@ -9,7 +9,7 @@ Config.prototype.configure = function(){
     var self = this;
     self.hostname = "http://pricepanel.dev.cloud9ide.com/";
     this.app.configure('production', function() {
-        self.hostname = "http://floating-earth-4631.herokuapp.com/";
+        self.hostname = "http://complexfx.herokuapp.com/";
     });
     
     this.io.configure('production', function(){
