@@ -22,4 +22,8 @@ ChatSession.prototype = {
 
 };
 
+exports.create = function(args){
+    return new ChatSession(args);   
+};
+
 
