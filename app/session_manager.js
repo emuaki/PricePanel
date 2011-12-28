@@ -88,11 +88,11 @@ ClientSession.prototype = {
 
 
 
-var ClientSessionManager = function(option){
+var SessionManager = function(option){
     this.initialize(option);
 };
 
-ClientSessionManager.prototype = {
+SessionManager.prototype = {
     
     sessions : {},
     
@@ -135,7 +135,7 @@ ClientSessionManager.prototype = {
 };
 
 exports.create = function(){
-    return new ClientSessionManager(arguments[0], arguments[1]);   
+    return new SessionManager(arguments[0], arguments[1]);   
 };
 
 
