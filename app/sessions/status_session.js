@@ -9,6 +9,8 @@ StatusSession.prototype = {
         this.socket = args.socket;
         this.id = this.socket.id;
         this.sessionManager = args.sessionManager;
+        this.service = require('services/status_service').getService();
+        this.service.plusConnectionCount();
         this.initialSend();
         this.setupListener();
     },
@@ -20,18 +22,18 @@ StatusSession.prototype = {
         }
         this.socket.emit('notification', { 
             message : 'connected',
-            connectionCount: this.sessionManager.connectionCount,
+            connectionCount: this.service.connectionCount,
             transport : transport
         });
-
     },
     
     setupListener : function(){
         var self = this;
         this.socket.on('disconnect', function(){
+            self.service.minusConnectionCount();
             self.broadcast.emit('connectionCountChange', { 
                 message : 'disconnected',
-                connectionCount: self.connectionCount
+                connectionCount: self.service.connectionCount
             });
         });   
     }
