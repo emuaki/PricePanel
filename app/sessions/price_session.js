@@ -9,18 +9,17 @@ PriceSession.prototype = {
         this.socket = args.socket;
         this.id = this.socket.id;
         this.sessionManager = args.sessionManager;
-        this.initialSend();
         this.setupPriceListener();
-        this.socket.emit('price', this.getPricePublisher().latestPrices());
+        this.socket.emit('price', this.getPublisher().latestPrices());
     },
     
-    getPricePublisher : function(){
+    getPublisher : function(){
         return this.sessionManager.pricePublisher;
     },
 
     setupPriceListener : function(){
         var self = this;
-        this.getPricePublisher().on('price', function(prices){
+        this.getPublisher().on('price', function(prices){
             self.socket.emit('price', prices);
         });
     }

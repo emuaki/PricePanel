@@ -11,12 +11,10 @@ BarSession.prototype = {
         this.socket = args.socket;
         this.id = this.socket.id;
         this.sessionManager = args.sessionManager;
-        this.initialSend();
         this.setupListener();
-        this.socket.emit('price', this.getPricePublisher().latestPrices());
     },
     
-    getBarPublisher : function(){
+    getPublisher : function(){
         return this.sessionManager.barPublisher;
     },
  
@@ -40,12 +38,12 @@ BarSession.prototype = {
         };
         this.socket.on('barSubscribe', function(currencies){
             self.subscribeCurrencies = currencies;
-            self.getBarPublisher().on('bar', callback);
+            self.getPublisher().on('bar', callback);
         });
         
         this.socket.on('barUnsubscribe', function(){
             self.subscribeBarCurrencies = [];
-            self.getBarPublisher().removeListener('bar', callback);
+            self.getPublisher().removeListener('bar', callback);
         });
     }
     

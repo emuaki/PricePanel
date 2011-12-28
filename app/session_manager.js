@@ -37,7 +37,7 @@ SessionManager.prototype = {
     start : function(){
         var self = this;
         self.io.sockets.on('connection', function (socket) {
-            self.addSession(this.createSessionStore(socket));
+            self.addSession(self.createSessionStore(socket));
             socket.on('disconnect', function(){
                 self.removeSession(socket.id);
             });
