@@ -28,11 +28,7 @@ config.configure();
 var priceSettings = require('price_settings').values;
 
 
-var rateSource = require('fx_street/fx_street').create();
-// var rateSource = require('simulator/price_simulator').create();
- 
-var pricePublisher = require('price_publisher').create(io, rateSource);
-pricePublisher.start();
+
 
 var barManager = require('bar/manager').create(rateSource);
 barManager.start();
