@@ -29,9 +29,7 @@ SessionManager.prototype = {
     
     initialize : function(option){
         this.io = option.io;
-        this.pricePublisher = option.pricePublisher;
         this.barPublisher = option.barPublisher;
-        this.connectionCount = 0;
     },
     
     start : function(){
