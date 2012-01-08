@@ -1,5 +1,5 @@
 var util = require('util');
-var BarType = require('bar/bar').BarType;
+var BarType = require('models/bar').BarType;
 
 var ContainerBase = function(){    
   

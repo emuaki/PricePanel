@@ -28,15 +28,8 @@ config.configure();
 var priceSettings = require('models/price_settings').values;
 
 require('services/price_service').getService().start();
-
-var barManager = require('bar/manager').create();
-barManager.start();
-
-
-var sessionManager = require('session_manager').create({
-    io : io, 
-    barPublisher : barManager
-});
+require('services/bar_service').getService().start();
+var sessionManager = require('sessions/session_manager').create({io : io});
 
 sessionManager.start();
 
@@ -75,7 +68,8 @@ app.get('/detail', function(req, res){
 app.get('/barData', function(req, res){
     var barType = req.query.barType;
     var currencyPair = req.query.currencyPair;
-    var bars = barManager.find(barType, currencyPair);
+    var service = require('services/bar_service').getService();
+    var bars = service.find(barType, currencyPair);
     res.send(JSON.stringify(bars));
 });
 

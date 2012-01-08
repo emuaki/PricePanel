@@ -1,7 +1,7 @@
 var util = require('util'),
     events = require('events'),
-    bar = require('bar/bar'),
-    BarType = require('bar/bar').BarType,
+    bar = require('models/bar'),
+    BarType = require('models/bar').BarType,
     DateUtil = require('date').DateUtil;
 
 var CalculatorBase = function(){    
@@ -21,7 +21,7 @@ CalculatorBase.prototype.find = function(currencyPair, size){
 
 var TickCalculator = function(dataSource){
     this.initialize(dataSource);
-    this.container = require('bar/container').createContainer(BarType.TICK);
+    this.container = require('services/bar_container').createContainer(BarType.TICK);
 };
 
 util.inherits(TickCalculator, CalculatorBase);
@@ -47,7 +47,7 @@ TickCalculator.prototype.convert = function(price){
 
 var OneMinCalculator = function(dataSource){
     this.initialize(dataSource);
-    this.container = require('bar/container').createContainer(BarType.ONE_MIN);
+    this.container = require('services/bar_container').createContainer(BarType.ONE_MIN);
 };
 
 util.inherits(OneMinCalculator, CalculatorBase);

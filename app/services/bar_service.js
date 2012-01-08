@@ -1,21 +1,21 @@
-var calculator = require('bar/calculator'),
+var calculator = require('services/bar_calculator'),
     util = require('util'),
     events = require('events'),
-    BarType = require('bar/bar').BarType;
+    BarType = require('models/bar').BarType;
 
-var BarManager = function(){    
+var BarService = function(){    
     this.initialize();
 };
 
-util.inherits(BarManager, events.EventEmitter);
-BarManager.prototype.calculators  = {};
+util.inherits(BarService, events.EventEmitter);
+BarService.prototype.calculators  = {};
     
-BarManager.prototype.initialize = function(){
+BarService.prototype.initialize = function(){
     this.rateSource = require('services/price_service').getService().rateSource;
 };
 
     
-BarManager.prototype.start = function(){
+BarService.prototype.start = function(){
     var tickCalculator = calculator.createCalculator(BarType.TICK, this.rateSource);
     this.calculators[BarType.TICK] = tickCalculator;
     tickCalculator.start();
@@ -24,7 +24,7 @@ BarManager.prototype.start = function(){
     this.calculators[BarType.ONE_MIN] = oneMinCalculator;
     oneMinCalculator.start();
     
-    console.log("BarManager start.");
+    console.log("BarService start.");
     
     var self = this;
     tickCalculator.on('bar', function(bar){
@@ -36,13 +36,13 @@ BarManager.prototype.start = function(){
     });
 };
     
-BarManager.prototype.find =function(barType, currencyPair, size){
+BarService.prototype.find =function(barType, currencyPair, size){
     var calculator = this.calculators[barType];
     var bars = calculator.find(currencyPair, 30);
     return bars;
 };
 
-
-exports.create = function(rateSource){
-    return new BarManager(rateSource);   
+var barService = new BarService();
+exports.getService = function(){
+    return barService;   
 };

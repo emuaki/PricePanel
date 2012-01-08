@@ -10,12 +10,11 @@ BarSession.prototype = {
     initialize : function(args){
         this.socket = args.socket;
         this.id = this.socket.id;
-        this.sessionManager = args.sessionManager;
         this.setupListener();
     },
     
     getPublisher : function(){
-        return this.sessionManager.barPublisher;
+        return require('services/bar_service').getService();
     },
  
     isBarPublishTarget : function(bar){
