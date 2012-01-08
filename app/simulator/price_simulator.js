@@ -27,7 +27,7 @@ PriceSimulator.prototype.publish = function(setting){
 };
         
 PriceSimulator.prototype.doPublish = function(setting){
-    var price = require('price').create({
+    var price = require('models/price').create({
         currencyPair : setting.currencyPair,
         bid : setting.nextBid(),
         ask : setting.nextAsk(),
