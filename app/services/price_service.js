@@ -5,8 +5,8 @@ var PriceService = function(args){
 PriceService.prototype = {
     
     initialize : function(args){
-        //this.rateSource = require('fx_street/fx_street').create();
-        this.rateSource = require('simulator/price_simulator').create();
+        this.rateSource = require('fx_street/fx_street').create();
+        // this.rateSource = require('simulator/price_simulator').create();
         
         this.pricePublisher = require('services/price_publisher').create(this.rateSource);
     },
