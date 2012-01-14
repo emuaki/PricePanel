@@ -13,7 +13,7 @@ TwitterService.prototype = {
             track: ['fx','USD/JPY']
         });
 
-        twitter .addListener('tweet', function(tweet) {
+        twitter.addListener('tweet', function(tweet) {
             console.log(tweet.text);
         }).stream();
 
