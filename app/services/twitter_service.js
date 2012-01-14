@@ -12,10 +12,15 @@ TwitterService.prototype = {
             password: 'dev@emuaki.com',
             track: ['fx','USD/JPY']
         });
+/*
+        twitter.addListener('error', function(error) {
+            console.log(error.message);
+        });
 
-        twitter.addListener('tweet', function(tweet){
+        twitter.addListener('tweet', function(tweet) {
             console.log(tweet.text);
         }).stream();
+*/
     },
     
     start : function(){
