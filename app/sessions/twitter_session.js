@@ -17,7 +17,6 @@ TwitterSession.prototype = {
     },
     
     setupListener : function(){
-    
     }
     
 };
