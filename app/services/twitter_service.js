@@ -16,7 +16,6 @@ TwitterService.prototype = {
         twitter.addListener('tweet', function(tweet){
             console.log(tweet.text);
         }).stream();
-
     },
     
     start : function(){
