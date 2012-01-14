@@ -30,9 +30,7 @@ StatusSession.prototype = {
         var self = this;
         this.socket.on('disconnect', function(){
             self.service.minusConnectionCount();
-            if(! self.broadcast.emit) return;
-            
-            self.broadcast.emit('connectionCountChange', { 
+            self.socket.broadcast.emit('connectionCountChange', { 
                 message : 'disconnected',
                 connectionCount: self.service.connectionCount
             });
@@ -40,8 +38,6 @@ StatusSession.prototype = {
     }
     
 };
-
-
 
 exports.create = function(args){
     return new StatusSession(args);   
