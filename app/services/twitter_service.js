@@ -8,8 +8,6 @@ TwitterService.prototype = {
         console.log("twitter service initialize");
         
         var Twitter = require('ntwitter');
-        return true;
-        
         var twit = new Twitter({
             consumer_key: 'FOqTAayAfyMgKdYwQ3EwhA',
             consumer_secret: 'bMkQSr0bd1xTzZfr2U4MnKEiradp5P3iLDSJInxo',
@@ -17,9 +15,15 @@ TwitterService.prototype = {
             access_token_secret: 'OvxQtfQwZ3vvObf5UkAS56jBhsDQX6EfxMUxZ8uTE'
         });
         
-        twit.stream('statuses/filter', {track: "fx,usd/jpy,eur/jpy"}, function(stream) {
+        twit.stream('statuses/filter', {track: "usd/jpy,eur/jpy,aud/jpy"}, function(stream) {
             stream.on('data', function (data) {
-                console.log(data);
+                
+                var tweet = {
+                    name : data.user.screen_name,
+                    text : data.text,
+                    created_at : data.created_at
+                };
+                console.log(tweet);
             });
         });
     },
