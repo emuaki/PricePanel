@@ -6,21 +6,22 @@ TwitterService.prototype = {
     
     initialize : function(args){
         console.log("twitter service initialize");
-        var TwitterNode = require('twitter-node').TwitterNode;
-        var twitter = new TwitterNode({
-            user: 'devemuakicom',
-            password: 'dev@emuaki.com',
-            track: ['fx','USD/JPY']
+        
+        var Twitter = require('ntwitter');
+        return true;
+        
+        var twit = new Twitter({
+            consumer_key: 'FOqTAayAfyMgKdYwQ3EwhA',
+            consumer_secret: 'bMkQSr0bd1xTzZfr2U4MnKEiradp5P3iLDSJInxo',
+            access_token_key: '463759440-L7wfycq1ea0oSj6pd2qZExcKMXw6MhsDo3G8UFa7',
+            access_token_secret: 'OvxQtfQwZ3vvObf5UkAS56jBhsDQX6EfxMUxZ8uTE'
         });
-/*
-        twitter.addListener('error', function(error) {
-            console.log(error.message);
+        
+        twit.stream('statuses/filter', {track: "fx,usd/jpy,eur/jpy"}, function(stream) {
+            stream.on('data', function (data) {
+                console.log(data);
+            });
         });
-
-        twitter.addListener('tweet', function(tweet) {
-            console.log(tweet.text);
-        }).stream();
-*/
     },
     
     start : function(){
