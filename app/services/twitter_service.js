@@ -6,6 +6,7 @@ TwitterService.prototype = {
     
     initialize : function(args){
         console.log("twitter service initialize");
+        return;
         
         var Twitter = require('ntwitter');
         var twit = new Twitter({
