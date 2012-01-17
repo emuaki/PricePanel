@@ -9,4 +9,7 @@
     "nib" : "0.2.0",
     "ntwitter" : "0.2.9-2",
     "oauth" : "0.8.4",
-    "cookies" : "0.1.x"
+    "cookies" : "0.1.x",
+    "keygrip" : "0.1.x"
+  }
+}
