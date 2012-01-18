@@ -16,7 +16,7 @@ TwitterService.prototype = {
             access_token_secret: 'OvxQtfQwZ3vvObf5UkAS56jBhsDQX6EfxMUxZ8uTE'
         });
         
-        twit.stream('statuses/filter', {track: "usd/jpy,eur/jpy,aud/jpy"}, function(stream) {
+        twit.stream('statuses/filter', {track: "fx,usd/jpy,eur/jpy,aud/jpy"}, function(stream) {
             stream.on('data', function (data) {
                 
                 var tweet = {
