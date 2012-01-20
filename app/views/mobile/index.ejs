@@ -42,8 +42,7 @@
         
         new ConnectionStatus(socket, {
             "count" : "#connectionCount",
-            "status" : "#connectionStatus",
-            "transport" : "#connectionTransport"
+            "status" : "#connectionStatus"
         }).start();
 
       });
@@ -157,7 +156,6 @@
       <div data-role="contents">
         <ul data-role="listview">
          <li>現在の接続数：<span id="connectionCount"></span></li>
-         <li>現在の接続方法：<span id="connectionTransport"></span></li>
          <li>現在の接続状態：<span id="connectionStatus"></span></li>
         </ul>
       </div>

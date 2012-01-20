@@ -8,7 +8,6 @@ ConnectionStatus.prototype = {
         this.socket = socket;
         this.status = $(selectors.status);
         this.count = $(selectors.count);
-        this.transport = $(selectors.transport);
     },
     
     start : function(){
@@ -42,7 +41,6 @@ ConnectionStatus.prototype = {
         this.socket.on('notification', function (data) {
             $.mobile.hidePageLoadingMsg();
             self.count.html(data.connectionCount);
-            self.transport.html(data.transport);
         });
         
         this.socket.on('connectionCountChange', function (data) {

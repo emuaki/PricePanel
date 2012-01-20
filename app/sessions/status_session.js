@@ -15,14 +15,9 @@ StatusSession.prototype = {
     },
     
     initialSend : function(){
-        var transport = "";
-        if(this.socket.transport){
-            transport = this.socket.transport;
-        }
         this.socket.emit('notification', { 
             message : 'connected',
-            connectionCount: this.service.connectionCount,
-            transport : transport
+            connectionCount: this.service.connectionCount
         });
     },
     
