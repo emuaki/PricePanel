@@ -1,0 +1,624 @@
+<head>
+	<script src="kinetic-v3.6.4.js">
+	</script>
+	<script src="data2.txt">
+	</script>
+	<script>
+
+		var canvas_width = 900;					// キャンバスの幅
+		var canvas_height = 600;				// キャンバスの高さ
+		var canvas_x_middle = canvas_width / 2;	// キャンバスの中心のx座標
+		var margin_x = 10;						// 描画領域からの横マージン
+		var margin_y = 10;						// 縦マージン
+		var margin_x_hVar = 10;					// 水平スケールの横マージン
+		var margin_y_hVar = 10;					// 水平スケールの縦マージン
+		var margin_x_text_vVar = 20;			// 垂直スケールの文字列マージン
+		var margin_y_text_hVar = 20;			// 水平スケールの文字列マージン
+		var pos_interval_hVar = 10;				// 水平スケールの間隔
+		var pos_height_hVar = 5;				// 水平スケールの目盛り高さ
+		var pos_interval_vVar = 10;				// 垂直スケールの間隔
+		var pos_width_hVar = 5;					// 垂直スケールの目盛り幅
+		var pos_x_render_right = canvas_width - margin_x - margin_x_hVar - margin_x_text_vVar;		// グラフ描画領域の右端 x
+		var pos_x_render_left = margin_x + margin_x_hVar;											// グラフ描画領域の左端
+		var pos_y_render_lower = canvas_height - margin_y - margin_y_hVar - margin_y_text_hVar;		// グラフ描画領域の下端
+		var pos_y_render_upper = margin_y + margin_y_hVar;											// グラフ描画領域の上端
+		var rectWidth = 3;						// ローソク線の両脇幅
+		var data_offset = 0;					// 表示データのオフセット
+		var data_drag = false;					// 表示データのドラッグ
+		var x_drag = 0;							// 表示データのドラッグ位置
+		var default_line_width = 0.4;			// デフォルトの線幅
+		var grid_line_width = 0.2;				// グリッドの線幅
+		var grid_interval = 100;				// グリッド間隔
+		var default_strokeStyle = "black";		// デフォルトのStorokeStyle
+		var tooltip_font = "8pt Calibri";		// ToolTipのFont
+		var maj_font = "9pt Calibri";			// メジャーのFont
+		var line_interval_x_count = ( pos_x_render_right - pos_x_render_left ) / pos_interval_hVar ;	// 足の表示本数
+		var line_interval_y_count = ( pos_y_render_lower - pos_y_render_upper ) / pos_interval_vVar ;	// 横の区切り本数
+		var spline_point_interval = 1;			// スプライン関数の補間間隔
+		var color_stick_up =  "#FF3200";		// 足の色 上昇
+		var color_stick_down =  "#00D2FF"		// 足の色 下降
+		var ma_line_width = 1.5;				// 移動平均の線幅
+		
+		
+		// 画面描画の処理
+		window.onload = function(){
+			var stage = new Kinetic.Stage("container", canvas_width, canvas_height);
+			
+			// レイヤの登録
+			var linesLayer = new Kinetic.Layer();
+			var shapesLayer = new Kinetic.Layer();
+			var tooltipLayer = new Kinetic.Layer();
+			var scaleLayer = new Kinetic.Layer();
+			var bgLayer = new Kinetic.Layer();
+
+			// データの計算
+			var maxhigh = CHART_DATA[0].high;
+			var minLow = CHART_DATA[0].low;
+			var highValueY = pos_y_render_upper + margin_y;
+			var lowValueY = pos_y_render_lower - margin_y;
+			var rightX = canvas_width - margin_x - margin_x_hVar - margin_x;
+			var leftX = margin_x + margin_x_hVar + margin_x;
+
+			// 最大、最小を求める。
+			for (var i = 0; i < CHART_DATA.length; i++) {
+				if( maxhigh <  CHART_DATA[i].high ){
+					maxhigh = CHART_DATA[i].high;
+				}
+				if( minLow >  CHART_DATA[i].low ){
+					minLow = CHART_DATA[i].low;
+				}
+				CHART_DATA[i].index = i;
+			}
+			
+			// 5日移動平均を求める　moving_average
+			var average = 0;
+			var moving = 5;
+			for (var i = 0; i < CHART_DATA.length; i++) {
+				average += CHART_DATA[i].end - 0.0;
+				if( i >= ( moving -1) ){
+					CHART_DATA[i].ma_end = average / moving;
+					average -= CHART_DATA[i - ( moving -1) ].end;
+				}
+			}
+			
+			// 高値、安値を丸める
+			maxhigh = Math.ceil(maxhigh * 10) / 10 ;
+			minLow = Math.floor(minLow * 10) / 10 ;
+			
+			var intervalY = (maxhigh - minLow) / ( line_interval_y_count - 6 );
+
+			// 縦軸計算用の変換率
+			var rateY = (lowValueY - highValueY) / (maxhigh - minLow);
+
+			// 描画オブジェクトの作成
+
+			// 背景の描画
+			var bgImage = new Kinetic.Shape(function(){
+				var x1 = margin_x;
+				var y1 = margin_y;
+				var x2 = canvas_width - margin_x;
+				var y2 = canvas_height - margin_y;
+		  
+				var context = this.getContext();
+				context.beginPath();
+				context.lineWidth = 1;
+				context.strokeStyle = default_strokeStyle;
+				context.fillStyle = "#FFFFFF";
+				
+				context.moveTo(x1, y1);
+				context.lineTo(x2, y1);
+				context.lineTo(x2, y2);
+				context.lineTo(x1, y2);
+				context.lineTo(x1, y1);
+				context.closePath();
+				context.fill();
+				context.stroke();
+			});
+			
+			// 背景レイヤーのイベント
+			bgImage.on("mousedown touchstart", function(){
+				data_drag = true;
+				var mousePos = stage.getMousePosition();
+				x_drag = mousePos.x;
+			});
+
+			// イベント処理
+			bgImage.on("mouseup touchend", function(){
+				data_drag = false;
+			});
+
+			// イベント処理
+			bgImage.on("mousemove", function(){
+				if( ! data_drag ){
+					return;
+				}
+				var mousePos = stage.getMousePosition();
+				var x = x_drag - mousePos.x ;
+				if( x > 0 ){
+					data_offset += 1;
+				}else
+				if( x < 0 ){
+					data_offset -= 1;
+				}
+				if( data_offset < 0 ){
+					data_offset = 0;
+				}else
+				if( CHART_DATA.length <= data_offset + line_interval_x_count){
+					data_offset = CHART_DATA.length - line_interval_x_count;
+				}
+				shapesLayer.draw();
+				linesLayer.draw();
+				x_drag= mousePos.x ;
+			});
+			bgLayer.add(bgImage);
+
+			// メジャーの描画
+			// 水平基準線 上
+			var hUpperVar = new Kinetic.Shape(function(){
+				storokeHorizontalScale( this.getContext() , pos_x_render_left , pos_x_render_right ,pos_y_render_upper,true);
+			});
+
+			// 水平基準線 下
+			var hLowerVar = new Kinetic.Shape(function(){
+				var y3 = pos_y_render_lower - pos_height_hVar;
+				var context = this.getContext();
+				
+				storokeHorizontalScale(context , pos_x_render_left , pos_x_render_right , pos_y_render_lower,false);
+
+				// 縦グリッド線を引く
+				context.lineWidth = grid_line_width;
+				var x = pos_x_render_left;
+				addY = 3;
+				while (x <= pos_x_render_right ) {
+					if( x % grid_interval ==0 ){
+						context.moveTo(x, y3 - addY);
+						context.lineTo(x, pos_y_render_upper);
+					}
+					x += pos_interval_hVar;
+				}
+				context.stroke();
+			});
+
+			scaleLayer.add(hUpperVar);
+			scaleLayer.add(hLowerVar);
+
+			// 垂直基準線 左
+			var vLeftVar = new Kinetic.Shape(function(){
+				var x1 = margin_x + margin_x_hVar;
+				var y1 = pos_y_render_upper;
+				var y2 = pos_y_render_lower;
+				var x2 = x1 + pos_width_hVar;
+				var context = this.getContext();
+				storokeVerticalScale(context, y1,y2,x1,true);
+			});
+
+			// 垂直基準線 右
+			var vRightVar = new Kinetic.Shape(function(){
+				// 横グリッド線を引く
+				var context = this.getContext();
+				storokeVerticalScale(context,pos_y_render_upper,pos_y_render_lower,pos_x_render_right,false);
+				context.lineWidth = grid_line_width;
+				var y = pos_y_render_upper;
+				while (y <= pos_y_render_lower) {
+					if( y % grid_interval ==0 ){
+						context.moveTo(pos_x_render_right, y);
+						context.lineTo(pos_x_render_left, y);
+					}
+					y += pos_interval_vVar;
+				}
+				context.stroke();
+			});
+
+			// 垂直ラベル 右
+			var vRightLavel = new Kinetic.Shape(function(){
+				var x1 = pos_x_render_right;
+				var y1 = pos_y_render_upper;
+				var y2 = pos_y_render_lower;
+		  
+				var context = this.getContext();
+				context.beginPath();
+				context.lineWidth = default_line_width;
+
+				context.fillStyle = "black";
+				context.strokeStyle = "black";
+				
+				context.moveTo(x1, y1);
+				context.lineTo(x1, y2);
+				context.stroke();
+
+				var y = y1;
+				var addX = 0;
+				while (y <= y2) {
+					if( y % grid_interval ==0 ){
+						addX = 3;
+					}else{
+						addX = 0;
+					}
+					context.moveTo(x1, y);
+					context.lineTo(x2 - addX, y);
+					y += pos_interval_vVar;
+				}
+				context.stroke();
+
+				context.lineWidth = 0.3;
+				y = y1;
+				addX = 0;
+				while (y <= y2) {
+					if( y % grid_interval ==0 ){
+						addX = 3;
+						// 横グリッド線を引く
+						context.moveTo(x2, y);
+						context.lineTo(x3, y);
+					}else{
+						addX = 0;
+					}
+					y += pos_interval_vVar;
+				}
+				context.stroke();
+				
+			});
+			scaleLayer.add(vLeftVar);
+			scaleLayer.add(vRightVar);
+
+			// ツールチップ
+
+			var tooltip = new Kinetic.Shape(function(){
+				var context = this.getContext();
+				context.beginPath();
+				context.fillStyle = 'rgba(155, 187, 89, 0.7)';
+				context.fillRect(5, 5, 90, 60);
+				context.font = tooltip_font;
+				context.fillStyle = "#555555";
+				context.textBaseline = "top";
+				context.fillText(this.time, 10, 10);
+				context.fillText(this.text1, 10, 20);
+				context.fillText(this.text2, 10, 30);
+				context.fillText(this.text3, 10, 40);
+				context.fillText(this.text4, 10, 50);
+				context.fillText(this.value1, 40, 20);
+				context.fillText(this.value2, 40, 30);
+				context.fillText(this.value3, 40, 40);
+				context.fillText(this.value4, 40, 50);
+			});
+			tooltip.time = "";
+			tooltip.text1 = "start:";
+			tooltip.text2 = "end:";
+			tooltip.text3 = "high:";
+			tooltip.text4 = "low:";
+			tooltip.value1 = "";
+			tooltip.value2 = "";
+			tooltip.value3 = "";
+			tooltip.value3 = "";
+			tooltip.hide();
+
+			//tooltipLayer.listen(false);
+			tooltipLayer.add(tooltip);
+
+			// グラフレイヤーの作成
+
+			// 足の描画オブジェクトの作成
+			// 縦軸に一つずつ割り当てる
+			
+			var i = 0;
+			var xIndex = pos_x_render_left + pos_interval_hVar;
+			while (xIndex < pos_x_render_right) {
+				var barShape = new Kinetic.Shape(function(){
+					var hol = pos_x_render_left + pos_interval_hVar * ( this.index + 1 );
+					var dataIndex = data_offset + this.index;
+					if( dataIndex < 0 || CHART_DATA.length <= dataIndex ){
+						return; // 描画できない
+					}
+					var barData = CHART_DATA[dataIndex];
+					
+					var high = rateY * ( maxhigh - barData.high);
+					var low = rateY * ( maxhigh - barData.low);
+					var start = rateY * ( maxhigh - barData.start);
+					var end = rateY * ( maxhigh - barData.end);
+					var dir = +1;
+					var ma_end = rateY * ( maxhigh - barData.ma_end);
+
+					var context = this.getContext();
+					context.strokeStyle = default_strokeStyle;
+					context.lineWidth = 0.4;
+					context.fillStyle = color_stick_up;
+
+					if( start > end ){
+						var vart = start;
+						start = end;
+						end = vart;
+						context.fillStyle = color_stick_down;
+					}
+
+					var middleX = hol;
+					var highY = highValueY + high;
+					var ma_endY = highValueY + ma_end;
+					var startY = highValueY + start;
+					var endY = highValueY + end;
+					var lowY = highValueY + low;
+					var rectXL = hol - rectWidth;
+					var rectXR = hol + rectWidth;
+
+					context.beginPath();
+					context.moveTo(middleX, highY);
+					context.lineTo(middleX, startY);
+
+					context.moveTo(middleX, endY);
+					context.lineTo(middleX, lowY);
+
+					context.stroke();
+
+					context.moveTo(rectXL, startY);
+					context.lineTo(rectXR, startY);
+					context.lineTo(rectXR, endY);
+					context.lineTo(rectXL, endY);
+					context.lineTo(rectXL, startY);
+
+					// 移動平均のポイント
+					// context.fillRect(middleX, ma_endY,3,3);
+
+					context.closePath();
+					context.fill();
+					context.stroke();
+					
+				}, "prop");
+
+				barShape.index = i;
+				shapesLayer.add(barShape);
+				
+				// 水平目盛りに文字列を書く
+				if( xIndex % grid_interval == 0 ){
+					var labelShape = new Kinetic.Shape(function(){
+						var hol = pos_x_render_left + pos_interval_hVar * ( this.index + 1 );
+						var dataIndex = data_offset + this.index;
+						if( dataIndex < 0 || CHART_DATA.length <= dataIndex ){
+							return; // 描画できない
+						}
+						var barData = CHART_DATA[dataIndex];
+						var context = this.getContext();
+						
+						context.beginPath();
+						context.fillStyle = "black";
+						context.font = maj_font;
+						context.fillText(barData.date, hol - 30, pos_y_render_lower +11);	
+						context.closePath();
+						context.stroke();
+						
+					}, "prop");
+					labelShape.index = i;
+					shapesLayer.add(labelShape);
+				}
+				xIndex += pos_interval_hVar;
+				i++;
+				
+				barShape.on("mousemove", function(){
+					var mousePos = stage.getMousePosition();
+					if( canvas_x_middle < mousePos.x ){
+						tooltip.x = mousePos.x - 90;
+					}else{
+						tooltip.x = mousePos.x ;
+					}
+					
+					var dataIndex = data_offset + this.index;
+					if( dataIndex < 0 || CHART_DATA.length <= dataIndex ){
+						return; // 描画できない
+					}
+
+					var barData = CHART_DATA[dataIndex];
+					tooltip.y = mousePos.y;
+					tooltip.time =	barData.date;
+					tooltip.value1 =  barData.start;
+					tooltip.value2 =  barData.end;
+					tooltip.value3 =  barData.high;
+					tooltip.value4 =  barData.low;
+					tooltip.show();
+					tooltipLayer.draw();
+				});
+	 
+				barShape.on("mouseout", function(){
+					tooltip.hide();
+					tooltipLayer.draw();
+				});
+
+			}
+
+			//
+			// 5日移動平均線を引くShape
+			//
+			var ma5HighLineShape = new Kinetic.Shape(function(){
+				var x;
+				var y;
+				var dataX = new Array(); // 間隔
+				var dataY = new Array(); // 間隔
+
+				// 移動平均の離散した点のX,Y座標を求める
+				var real_index = 0;
+				for (var i = data_offset ; i < CHART_DATA.length; i++) {
+					if( i >= 4 ){
+						x = pos_x_render_left + pos_interval_hVar * ( i + 1 );
+						dataY[real_index] = highValueY + ( rateY * ( maxhigh - CHART_DATA[i].ma_end) );
+						dataX[real_index] = pos_x_render_left + pos_interval_hVar * ( i + 1 );
+						real_index++;
+					}
+				}
+
+				//
+				// ３次スプライン補間で各点間の軌跡のポイントを計算する。
+				//
+				var pa = calcSplineInterpoll(dataX,dataY,spline_point_interval);
+				
+				// 軌跡つなぐ、ラインの描画
+				var context = this.getContext();
+				context.lineJoin = "round";
+				context.beginPath();
+				context.strokeStyle = "#009933";
+				context.lineWidth = ma_line_width;
+
+				var i = 0;
+				for (; i < pa.pointX.length; i++) {
+					x = pa.pointX[i] - (pos_interval_hVar * data_offset);
+					if( x < pos_x_render_left ){
+						continue;
+					}else
+					if( x > pos_x_render_right ){
+						break;
+					}
+					context.moveTo(x , pa.pointY[i]);
+					break;
+				}
+				for (i++ ; i < pa.pointX.length; i++) {
+					x = pa.pointX[i] - (pos_interval_hVar * data_offset);
+					if( x > pos_x_render_right ){
+						break;
+					}
+					context.lineTo(x, pa.pointY[i]);
+				}
+				context.stroke();
+			});
+			
+			linesLayer.add(ma5HighLineShape);
+			
+			stage.add(bgLayer);
+			stage.add(shapesLayer);
+			stage.add(scaleLayer);
+			stage.add(tooltipLayer);
+			stage.add(linesLayer);
+		};
+
+
+		// 水平基準線
+		function storokeHorizontalScale (context,x1,x2,y1,isUpper){
+			var y3 = y1;
+			var yValue = 0;
+			var addY = 0;
+			
+			if( isUpper ){
+				y3 += pos_height_hVar;
+				addY = 3;
+			}else{
+				y3 -= pos_height_hVar;
+				addY = -3;
+			}
+	  
+			context.beginPath();
+			context.lineWidth = default_line_width;
+			context.strokeStyle = "#707070";
+			
+			context.moveTo(x1, y1);
+			context.lineTo(x2, y1);
+			context.stroke();
+			
+			var x = x1;
+			while (x <= x2) {
+				context.moveTo(x, y1);
+				if( x % grid_interval ==0 ){
+					context.lineTo(x, y3 + addY);
+				}else{
+					context.lineTo(x, y3);
+				}
+				x += pos_interval_hVar;
+			}
+			context.stroke();
+		}
+
+		// 垂直基準線
+		function storokeVerticalScale (context,y1,y2,x1,isLeft){
+			var x2 = 0;
+			var addX = 0;
+			if( isLeft == true){
+				addX = 3;
+				x2 = x1 + pos_width_hVar;
+			}else{
+				addX = -3;
+				x2 = x1 - pos_width_hVar;
+			}
+			
+			context.beginPath();
+			context.lineWidth = default_line_width;
+			context.strokeStyle = "#707070";
+			context.moveTo(x1, y1);
+			context.lineTo(x1, y2);
+			context.lineTo(x1, y2);
+			context.stroke();
+
+			var y = y1;
+			while (y <= y2) {
+				context.moveTo(x1, y);
+				if( y % grid_interval ==0 ){
+					context.lineTo(x2 + addX, y);
+				}else{
+					context.lineTo(x2, y);
+				}
+				y += pos_interval_vVar;
+			}
+			context.stroke();
+			
+		}
+		
+		//
+		// X,Yのポイントの配列を持つオブジェクト
+		//
+		function XYPointArray(){
+			this.pointX = new Array();
+			this.pointY = new Array();
+		}
+
+		//
+		// ３次スプライン補間で各点間の軌跡のポイントを計算する。
+		//
+		function calcSplineInterpoll(dataX,dataY,interpolateX){
+			var x;
+			var y;
+			var yy0;
+			var yy1;
+			var yy2;
+			var yy3;
+
+			var h = new Array(); 		// 間隔
+			var dif1 = new Array();		// 一次微分値
+			var dif2 = new Array();		// 二次微分値
+			var result = new XYPointArray();
+
+			var data_count = dataX.length;
+			h[0] = 0.0;
+			dif2[0] = 0.0;
+			dif2[data_count - 1] = 0.0;
+
+			for (var i = 1; i < data_count; i++) {
+				h[i] = dataX[i] - dataX[i - 1]; // 間隔を計算
+				dif1[i] = (dataY[i] - dataY[i - 1]) / h[i]; // 一次微分を計算
+			}
+
+			for (var i = 1; i < data_count; i++){
+				// 二次微分を計算
+				dif2[i] = (dif1[i + 1] - dif1[i]) / (dataX[i + 1] - dataX[i - 1]);
+			}
+				
+			// 補間の軌跡の密度の係数
+			var i = 1;
+			real_index = 0;
+			for (x = dataX[0]; x < dataX[data_count - 1]; x += interpolateX) {
+				if (x < dataX[i]) {
+					
+					yy0 = dif2[i - 1] / (6 * h[i]) * (dataX[i] - x) * (dataX[i] - x) * (dataX[i] - x); 			// 第1項
+					yy1 = dif2[i] / (6 * h[i]) * (x - dataX[i - 1]) * (x - dataX[i - 1]) * (x - dataX[i - 1]); 	// 第2項
+					yy2 = (dataY[i - 1] / h[i] - h[i] * dif2[i - 1] / 6) * (dataX[i] - x); 						// 第3項
+					yy3 = (dataY[i] / h[i] - h[i] * dif2[i] / 6) * (x - dataX[i - 1]); 							// 第4項
+					y = yy0 + yy1 + yy2 + yy3;
+
+					// 配列に格納する
+					result.pointX[real_index] = x;
+					result.pointY[real_index] = y;
+					
+					real_index++;
+					
+				} else
+					i++;
+			}
+			return(result);
+		}
+	</script>
+</head>
+<body onmousedown="return false;">
+	<div id="container">
+	</div>
+</body>
