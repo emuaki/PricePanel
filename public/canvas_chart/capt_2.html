@@ -1,3 +1,4 @@
+<html>
 <head>
 	<script src="kinetic-v3.6.4.js">
 	</script>
@@ -12,7 +13,7 @@
 		var margin_y = 10;						// 縦マージン
 		var margin_x_hVar = 10;					// 水平スケールの横マージン
 		var margin_y_hVar = 10;					// 水平スケールの縦マージン
-		var margin_x_text_vVar = 20;			// 垂直スケールの文字列マージン
+		var margin_x_text_vVar = 30;			// 垂直スケールの文字列マージン
 		var margin_y_text_hVar = 20;			// 水平スケールの文字列マージン
 		var pos_interval_hVar = 10;				// 水平スケールの間隔
 		var pos_height_hVar = 5;				// 水平スケールの目盛り高さ
@@ -26,70 +27,71 @@
 		var data_offset = 0;					// 表示データのオフセット
 		var data_drag = false;					// 表示データのドラッグ
 		var x_drag = 0;							// 表示データのドラッグ位置
+		var x_touchstart = 0;					// 表示データのドラッグ位置
 		var default_line_width = 0.4;			// デフォルトの線幅
 		var grid_line_width = 0.2;				// グリッドの線幅
 		var grid_interval = 100;				// グリッド間隔
 		var default_strokeStyle = "black";		// デフォルトのStorokeStyle
-		var tooltip_font = "8pt Calibri";		// ToolTipのFont
+		var tooltip_font = "10pt Calibri";		// ToolTipのFont
 		var maj_font = "9pt Calibri";			// メジャーのFont
 		var line_interval_x_count = ( pos_x_render_right - pos_x_render_left ) / pos_interval_hVar ;	// 足の表示本数
 		var line_interval_y_count = ( pos_y_render_lower - pos_y_render_upper ) / pos_interval_vVar ;	// 横の区切り本数
 		var spline_point_interval = 1;			// スプライン関数の補間間隔
 		var color_stick_up =  "#FF3200";		// 足の色 上昇
 		var color_stick_down =  "#00D2FF"		// 足の色 下降
+		var color_background =  "#FFFFFF"		// 背景色
 		var ma_line_width = 1.5;				// 移動平均の線幅
-		
-		
+		var flick_x_moverange = 120;			// Flick判定のx位置の差
+		var flick_x_movevalue = 6;				// Flick時の移動増分
+		var min_anime_frame_interval = 60;		// アニメーション時の描画間隔の最小値
+		var render_moving_average = true;		// 移動平均描画フラグ
+		var cursor_line_width = 0.7;			// カーソルの線幅
+		var render_cross_cursor = true;		// クロスカーソル描画フラグ
+		var cross_cursor_Y		= 0;			// クロスカーソルy軸位置		
+		var cross_cursor_X		= 0;			// クロスカーソルx軸位置
+		var fix_cross_cursor_X	= false;	// クロスカーソルx軸位置固定		
+		var fix_cross_cursor_Y	= false;	// クロスカーソルy軸位置固定		
+		var anime_stop_delayRate = 1.10;		// 描画遅延係数
+		var anime_stop_initialDelay = 2;		// 描画遅延時間初期値
+		var follow_Yscale_to_displayRange = true;	// Y軸の描画範囲追随フラグ
+		var rgba_transparent = 'rgba(255, 255, 255, 0)'	// 透明なスタイル
+		var rgba_tooltip= 'rgba(169, 245, 242, 0.8)'	//ツールチップ用	
+		var stage ;
+
+		// データの計算
+		var maxhigh = 0;
+		var minLow = 0;
+		var highValueY = pos_y_render_upper + margin_y;	// 最高値のY位置（固定値）
+		var lowValueY = pos_y_render_lower - margin_y;// 最安値のY位置（固定値）
+		var rateY;
+		var indexHigh = -1; // 高値 のインデックス
+		var indexLow = -1;	// 安値のインデックス
+	
+	
 		// 画面描画の処理
 		window.onload = function(){
-			var stage = new Kinetic.Stage("container", canvas_width, canvas_height);
+			stage = new Kinetic.Stage("container", canvas_width, canvas_height);
 			
 			// レイヤの登録
 			var linesLayer = new Kinetic.Layer();
+			var cursorLayer = new Kinetic.Layer();
 			var shapesLayer = new Kinetic.Layer();
 			var tooltipLayer = new Kinetic.Layer();
 			var scaleLayer = new Kinetic.Layer();
 			var bgLayer = new Kinetic.Layer();
 
-			// データの計算
-			var maxhigh = CHART_DATA[0].high;
-			var minLow = CHART_DATA[0].low;
-			var highValueY = pos_y_render_upper + margin_y;
-			var lowValueY = pos_y_render_lower - margin_y;
-			var rightX = canvas_width - margin_x - margin_x_hVar - margin_x;
-			var leftX = margin_x + margin_x_hVar + margin_x;
-
-			// 最大、最小を求める。
-			for (var i = 0; i < CHART_DATA.length; i++) {
-				if( maxhigh <  CHART_DATA[i].high ){
-					maxhigh = CHART_DATA[i].high;
-				}
-				if( minLow >  CHART_DATA[i].low ){
-					minLow = CHART_DATA[i].low;
-				}
-				CHART_DATA[i].index = i;
-			}
-			
 			// 5日移動平均を求める　moving_average
-			var average = 0;
-			var moving = 5;
-			for (var i = 0; i < CHART_DATA.length; i++) {
-				average += CHART_DATA[i].end - 0.0;
-				if( i >= ( moving -1) ){
-					CHART_DATA[i].ma_end = average / moving;
-					average -= CHART_DATA[i - ( moving -1) ].end;
-				}
+			culcMovingAverage(5);
+			// 25日移動平均を求める　moving_average
+			culcMovingAverage(25);
+
+			// 配列から値段の最大、最小を求める。
+			findMaxHighValueAll();
+			if( follow_Yscale_to_displayRange ){
+				// 描画範囲に合わせて調整
+				findMaxHighValueOffset();
 			}
 			
-			// 高値、安値を丸める
-			maxhigh = Math.ceil(maxhigh * 10) / 10 ;
-			minLow = Math.floor(minLow * 10) / 10 ;
-			
-			var intervalY = (maxhigh - minLow) / ( line_interval_y_count - 6 );
-
-			// 縦軸計算用の変換率
-			var rateY = (lowValueY - highValueY) / (maxhigh - minLow);
-
 			// 描画オブジェクトの作成
 
 			// 背景の描画
@@ -103,7 +105,7 @@
 				context.beginPath();
 				context.lineWidth = 1;
 				context.strokeStyle = default_strokeStyle;
-				context.fillStyle = "#FFFFFF";
+				context.fillStyle = color_background;
 				
 				context.moveTo(x1, y1);
 				context.lineTo(x2, y1);
@@ -120,32 +122,94 @@
 				data_drag = true;
 				var mousePos = stage.getMousePosition();
 				x_drag = mousePos.x;
+				x_touchstart = mousePos.x;
 			});
 
 			// イベント処理
 			bgImage.on("mouseup touchend", function(){
 				data_drag = false;
+				var mousePos = stage.getMousePosition();
+				var diff_x = x_touchstart - mousePos.x;
+				var animatedDiff = 0;
+
+				if( diff_x > flick_x_moverange ){
+					animatedDiff =  1;
+				}else
+				if( diff_x < -flick_x_moverange ){
+					animatedDiff = -1;
+				}
+				if( animatedDiff == 0 ){
+					return;
+				}
+				var moves = flick_x_movevalue * Math.abs(diff_x) / flick_x_moverange;
+				
+				if( animatedDiff != 0 ){
+					var next_data_offset = data_offset;
+					var x = x_drag - mousePos.x ;
+					var dataMove = new Array();
+					var  i = 0 ;
+					for(; i < moves ; i++){
+						next_data_offset += animatedDiff;
+						if( next_data_offset < 0 ){
+							break;
+						}else
+						if( CHART_DATA.length <= next_data_offset + line_interval_x_count){
+							break;
+						}
+					}
+					if( next_data_offset != data_offset){
+						setTimeout( function() { animateRender(animatedDiff,shapesLayer,linesLayer, i , anime_stop_initialDelay, anime_stop_delayRate) }, 0); 
+					}
+				}
 			});
 
 			// イベント処理
-			bgImage.on("mousemove", function(){
+			bgImage.on("mousemove touchmove", function(){
+				var mousePos = stage.getMousePosition();
+				if( mousePos ){
+					if(! fix_cross_cursor_Y ){
+						cross_cursor_Y = mousePos.y;
+					}
+					if(! fix_cross_cursor_X ){
+						cross_cursor_X = mousePos.x;
+					}
+					cursorLayer.draw();
+				}
 				if( ! data_drag ){
 					return;
 				}
-				var mousePos = stage.getMousePosition();
 				var x = x_drag - mousePos.x ;
+				var dataoffset_increse = 0;
+				var next_data_offset = data_offset;
+				
 				if( x > 0 ){
-					data_offset += 1;
+					next_data_offset += 1;
 				}else
 				if( x < 0 ){
-					data_offset -= 1;
+					next_data_offset -= 1;
 				}
-				if( data_offset < 0 ){
-					data_offset = 0;
+				if( next_data_offset < 0 ){
+					next_data_offset = 0;
 				}else
-				if( CHART_DATA.length <= data_offset + line_interval_x_count){
-					data_offset = CHART_DATA.length - line_interval_x_count;
+				if( CHART_DATA.length <= next_data_offset + line_interval_x_count){
+					next_data_offset = CHART_DATA.length - line_interval_x_count;
 				}
+
+				var diffoffset = next_data_offset - data_offset;
+				if( diffoffset != 0 ){
+					data_offset = next_data_offset;
+					if( follow_Yscale_to_displayRange ){
+
+						if( Math.abs(diffoffset) == 1 ){
+							// 描画範囲に合わせて再調整
+							findMaxHighValueOffsetDiff(diffoffset);
+						}else{
+							// 描画範囲に合わせて再調整
+							findMaxHighValueOffset();
+						}
+					}
+				}
+				
 				shapesLayer.draw();
 				linesLayer.draw();
 				x_drag= mousePos.x ;
@@ -179,6 +243,42 @@
 				context.stroke();
 			});
 
+			// クロスカーソルの描画 水平
+			var hCrossCursorVar = new Kinetic.Shape(function(){
+				if( ! render_cross_cursor || data_drag){
+					return;
+				}
+				if( cross_cursor_Y >= pos_y_render_lower || cross_cursor_Y <= pos_y_render_upper ){
+					return;
+				}
+				storokeHorizontalCursor( this.getContext() , pos_x_render_left , pos_x_render_right ,cross_cursor_Y);
+			});
+			// クロスカーソルの描画 垂直
+			var vCrossCursorVar = new Kinetic.Shape(function(){
+				if( ! render_cross_cursor || data_drag){
+					return;
+				}
+				if( cross_cursor_X >= pos_x_render_right || cross_cursor_X <= pos_x_render_left ){
+					return;
+				}
+				var context = this.getContext();
+				context.strokeStyle = rgba_transparent;
+				context.fillStyle = rgba_transparent;
+				context.moveTo(cross_cursor_X -2 , pos_y_render_upper);
+				context.lineTo(cross_cursor_X +2, pos_y_render_upper);
+				context.lineTo(cross_cursor_X +2, pos_y_render_lower);
+				context.lineTo(cross_cursor_X -2, pos_y_render_lower);
+				context.lineTo(cross_cursor_X -2, pos_y_render_upper);
+
+				context.closePath();
+				context.fill();
+				context.stroke();
+				
+				storokeVerticalCursor(context, pos_y_render_upper,pos_y_render_lower,cross_cursor_X);
+			});
+			cursorLayer.add(hCrossCursorVar);
+			cursorLayer.add(vCrossCursorVar);
+			
 			scaleLayer.add(hUpperVar);
 			scaleLayer.add(hLowerVar);
 
@@ -208,77 +308,50 @@
 				}
 				context.stroke();
 			});
-
+			
 			// 垂直ラベル 右
 			var vRightLavel = new Kinetic.Shape(function(){
-				var x1 = pos_x_render_right;
-				var y1 = pos_y_render_upper;
-				var y2 = pos_y_render_lower;
-		  
+				// 横グリッド線を引く
 				var context = this.getContext();
 				context.beginPath();
-				context.lineWidth = default_line_width;
-
-				context.fillStyle = "black";
-				context.strokeStyle = "black";
-				
-				context.moveTo(x1, y1);
-				context.lineTo(x1, y2);
-				context.stroke();
-
-				var y = y1;
-				var addX = 0;
-				while (y <= y2) {
+				context.lineWidth = grid_line_width;
+				var y = pos_y_render_upper;
+				while (y <= pos_y_render_lower) {
 					if( y % grid_interval ==0 ){
-						addX = 3;
-					}else{
-						addX = 0;
-					}
-					context.moveTo(x1, y);
-					context.lineTo(x2 - addX, y);
-					y += pos_interval_vVar;
-				}
-				context.stroke();
-
-				context.lineWidth = 0.3;
-				y = y1;
-				addX = 0;
-				while (y <= y2) {
-					if( y % grid_interval ==0 ){
-						addX = 3;
-						// 横グリッド線を引く
-						context.moveTo(x2, y);
-						context.lineTo(x3, y);
-					}else{
-						addX = 0;
+						var vGridValue = maxhigh - (y - highValueY )  / rateY;
+						vGridValue = Math.floor(vGridValue * 100) / 100;
+						context.fillStyle = "black";
+						context.font = maj_font;
+						context.fillText(vGridValue, pos_x_render_right + 5, y + 5);	
 					}
 					y += pos_interval_vVar;
 				}
 				context.stroke();
-				
 			});
+			
 			scaleLayer.add(vLeftVar);
 			scaleLayer.add(vRightVar);
+			shapesLayer.add(vRightLavel);
 
 			// ツールチップ
 
 			var tooltip = new Kinetic.Shape(function(){
 				var context = this.getContext();
 				context.beginPath();
-				context.fillStyle = 'rgba(155, 187, 89, 0.7)';
-				context.fillRect(5, 5, 90, 60);
+				context.fillStyle = rgba_tooltip;
+				context.fillRect(5, 5, 80, 65);
 				context.font = tooltip_font;
-				context.fillStyle = "#555555";
+				context.fillStyle = "#3333FF";
 				context.textBaseline = "top";
-				context.fillText(this.time, 10, 10);
-				context.fillText(this.text1, 10, 20);
-				context.fillText(this.text2, 10, 30);
-				context.fillText(this.text3, 10, 40);
-				context.fillText(this.text4, 10, 50);
-				context.fillText(this.value1, 40, 20);
-				context.fillText(this.value2, 40, 30);
-				context.fillText(this.value3, 40, 40);
-				context.fillText(this.value4, 40, 50);
+				context.fillText(this.time, 10, 11);
+				context.fillText(this.text1, 10, 22);
+				context.fillText(this.text2, 10, 33);
+				context.fillText(this.text3, 10, 44);
+				context.fillText(this.text4, 10, 55);
+				context.fillText(this.value1, 40, 22);
+				context.fillText(this.value2, 40, 33);
+				context.fillText(this.value3, 40, 44);
+				context.fillText(this.value4, 40, 55);
 			});
 			tooltip.time = "";
 			tooltip.text1 = "start:";
@@ -315,12 +388,12 @@
 					var start = rateY * ( maxhigh - barData.start);
 					var end = rateY * ( maxhigh - barData.end);
 					var dir = +1;
-					var ma_end = rateY * ( maxhigh - barData.ma_end);
 
 					var context = this.getContext();
 					context.strokeStyle = default_strokeStyle;
 					context.lineWidth = 0.4;
 					context.fillStyle = color_stick_up;
+					context.lineJoin = "round";
 
 					if( start > end ){
 						var vart = start;
@@ -331,13 +404,11 @@
 
 					var middleX = hol;
 					var highY = highValueY + high;
-					var ma_endY = highValueY + ma_end;
 					var startY = highValueY + start;
 					var endY = highValueY + end;
 					var lowY = highValueY + low;
 					var rectXL = hol - rectWidth;
 					var rectXR = hol + rectWidth;
-
 					context.beginPath();
 					context.moveTo(middleX, highY);
 					context.lineTo(middleX, startY);
@@ -352,9 +423,6 @@
 					context.lineTo(rectXR, endY);
 					context.lineTo(rectXL, endY);
 					context.lineTo(rectXL, startY);
-
-					// 移動平均のポイント
-					// context.fillRect(middleX, ma_endY,3,3);
 
 					context.closePath();
 					context.fill();
@@ -387,10 +455,57 @@
 					labelShape.index = i;
 					shapesLayer.add(labelShape);
 				}
-				xIndex += pos_interval_hVar;
-				i++;
-				
-				barShape.on("mousemove", function(){
+
+				// 高値から安値までの領域を透明に書く
+				var barRangeShape = new Kinetic.Shape(function(){
+					var hol = pos_x_render_left + pos_interval_hVar * ( this.index + 1 );
+					var dataIndex = data_offset + this.index;
+					if( dataIndex < 0 || CHART_DATA.length <= dataIndex ){
+						return; // 描画できない
+					}
+					var barData = CHART_DATA[dataIndex];
+					
+					var high = rateY * ( maxhigh - barData.high);
+					var low = rateY * ( maxhigh - barData.low);
+					var start = rateY * ( maxhigh - barData.start);
+					var end = rateY * ( maxhigh - barData.end);
+					var dir = +1;
+
+					var context = this.getContext();
+					context.strokeStyle = rgba_transparent;
+					context.fillStyle = rgba_transparent;
+					context.lineWidth = 0.1;
+
+					if( start > end ){
+						var vart = start;
+						start = end;
+						end = vart;
+					}
+
+					var middleX = hol;
+					var highY = highValueY + high;
+					var startY = highValueY + start;
+					var endY = highValueY + end;
+					var lowY = highValueY + low;
+					var rectXL = hol - rectWidth;
+					var rectXR = hol + rectWidth;
+					
+
+					context.beginPath();
+					context.moveTo(rectXL, highY);
+					context.lineTo(rectXR, highY);
+					context.lineTo(rectXR, lowY);
+					context.lineTo(rectXL, lowY);
+					context.lineTo(rectXL, highY);
+
+					context.closePath();
+					context.fill();
+					context.stroke();
+					
+				}, "prop");
+
+
+				barRangeShape.on("mousemove", function(){
 					var mousePos = stage.getMousePosition();
 					if( canvas_x_middle < mousePos.x ){
 						tooltip.x = mousePos.x - 90;
@@ -414,17 +529,33 @@
 					tooltipLayer.draw();
 				});
 	 
-				barShape.on("mouseout", function(){
+				barRangeShape.on("mouseout", function(){
 					tooltip.hide();
 					tooltipLayer.draw();
 				});
 
+
+				
+				barRangeShape.index = i;
+				shapesLayer.add(barRangeShape);
+				
+				xIndex += pos_interval_hVar;
+				i++;
 			}
 
 			//
 			// 5日移動平均線を引くShape
 			//
-			var ma5HighLineShape = new Kinetic.Shape(function(){
+			var ma15HighLineShape = new Kinetic.Shape(function(){
+				var context = this.getContext();
+
+				if( ! render_moving_average ){
+					context.beginPath();
+					context.moveTo(0 ,0);
+					context.stroke();
+					return;
+				}
+
 				var x;
 				var y;
 				var dataX = new Array(); // 間隔
@@ -433,9 +564,9 @@
 				// 移動平均の離散した点のX,Y座標を求める
 				var real_index = 0;
 				for (var i = data_offset ; i < CHART_DATA.length; i++) {
-					if( i >= 4 ){
+					if( i >= 5-1 ){
 						x = pos_x_render_left + pos_interval_hVar * ( i + 1 );
-						dataY[real_index] = highValueY + ( rateY * ( maxhigh - CHART_DATA[i].ma_end) );
+						dataY[real_index] = highValueY + ( rateY * ( maxhigh - CHART_DATA[i].ma_end[5]) );
 						dataX[real_index] = pos_x_render_left + pos_interval_hVar * ( i + 1 );
 						real_index++;
 					}
@@ -447,11 +578,13 @@
 				var pa = calcSplineInterpoll(dataX,dataY,spline_point_interval);
 				
 				// 軌跡つなぐ、ラインの描画
-				var context = this.getContext();
 				context.lineJoin = "round";
 				context.beginPath();
 				context.strokeStyle = "#009933";
 				context.lineWidth = ma_line_width;
+				context.shadowBlur = 8;
+				context.shadowColor = "#009933";
+
 
 				var i = 0;
 				for (; i < pa.pointX.length; i++) {
@@ -475,17 +608,86 @@
 				context.stroke();
 			});
 			
-			linesLayer.add(ma5HighLineShape);
+			linesLayer.add(ma15HighLineShape);
+
+
+
+			//
+			// 25日移動平均線を引くShape
+			//
+			var ma25HighLineShape = new Kinetic.Shape(function(){
+				var context = this.getContext();
+
+				if( ! render_moving_average ){
+					context.beginPath();
+					context.moveTo(0 ,0);
+					context.stroke();
+					return;
+				}
+
+				var x;
+				var y;
+				var dataX = new Array(); // 間隔
+				var dataY = new Array(); // 間隔
+
+				// 移動平均の離散した点のX,Y座標を求める
+				var real_index = 0;
+				for (var i = data_offset ; i < CHART_DATA.length; i++) {
+					if( i >= 25 ){
+						x = pos_x_render_left + pos_interval_hVar * ( i + 1 );
+						dataY[real_index] = highValueY + ( rateY * ( maxhigh - CHART_DATA[i].ma_end[25]) );
+						dataX[real_index] = pos_x_render_left + pos_interval_hVar * ( i + 1 );
+						real_index++;
+					}
+				}
+
+				//
+				// ３次スプライン補間で各点間の軌跡のポイントを計算する。
+				//
+				var pa = calcSplineInterpoll(dataX,dataY,spline_point_interval);
+				
+				// 軌跡つなぐ、ラインの描画
+				context.lineJoin = "round";
+				context.beginPath();
+				context.strokeStyle = "#333399";
+				context.lineWidth = ma_line_width;
+				context.shadowBlur = 8;
+				context.shadowColor = "#333399";
+
+				var i = 0;
+				for (; i < pa.pointX.length; i++) {
+					x = pa.pointX[i] - (pos_interval_hVar * data_offset);
+					if( x < pos_x_render_left ){
+						continue;
+					}else
+					if( x > pos_x_render_right ){
+						break;
+					}
+					context.moveTo(x , pa.pointY[i]);
+					break;
+				}
+				for (i++ ; i < pa.pointX.length; i++) {
+					x = pa.pointX[i] - (pos_interval_hVar * data_offset);
+					if( x > pos_x_render_right ){
+						break;
+					}
+					context.lineTo(x, pa.pointY[i]);
+				}
+				context.stroke();
+			});
+			
+			linesLayer.add(ma25HighLineShape);
 			
 			stage.add(bgLayer);
+			stage.add(cursorLayer);
 			stage.add(shapesLayer);
 			stage.add(scaleLayer);
 			stage.add(tooltipLayer);
 			stage.add(linesLayer);
 		};
+		// ロードメソッド終了
 
-
-		// 水平基準線
+		// 水平基準線を描く
 		function storokeHorizontalScale (context,x1,x2,y1,isUpper){
 			var y3 = y1;
 			var yValue = 0;
@@ -520,7 +722,27 @@
 			context.stroke();
 		}
 
-		// 垂直基準線
+		// 水平カーソルを描く
+		function storokeHorizontalCursor (context,x1,x2,y1){
+			context.beginPath();
+			context.lineWidth = cursor_line_width;
+			context.strokeStyle = "#FF7070";
+			context.moveTo(x1, y1);
+			context.lineTo(x2, y1);
+			context.stroke();
+		}
+		// 垂直カーソルを描く
+		function storokeVerticalCursor (context,y1,y2,x1){
+			context.beginPath();
+			context.lineWidth = cursor_line_width;
+			context.strokeStyle = "#FF7070";
+			context.moveTo(x1, y1);
+			context.lineTo(x1, y2);
+			context.lineTo(x1, y2);
+			context.stroke();
+		}
+
+		// 垂直基準線を描く
 		function storokeVerticalScale (context,y1,y2,x1,isLeft){
 			var x2 = 0;
 			var addX = 0;
@@ -562,6 +784,179 @@
 			this.pointY = new Array();
 		}
 
+
+		//
+		// 時間間隔指定した繰り返しのレンダリング
+		// 
+		function animateRender(offset,layer1,layer2 , remains ,delayd , delayed_incremant_rate){
+			if( data_drag ){
+				return;
+			}
+			if( remains <=0 ){
+				return;
+			}
+			data_offset += offset;
+			if( data_offset < 0 ){
+				data_offset = 0;
+				return;
+			}else
+			if( CHART_DATA.length <= data_offset + line_interval_x_count){
+				data_offset = CHART_DATA.length - line_interval_x_count;
+				return;
+			}
+			
+			if( follow_Yscale_to_displayRange ){
+				// 描画範囲に合わせて調整
+				findMaxHighValueOffset();
+			}
+			
+			layer1.draw();
+			layer2.draw();
+			
+			var next_delayd = delayd * delayed_incremant_rate;
+			
+			setTimeout( function() { animateRender(offset,layer1,layer2,remains -1,next_delayd,delayed_incremant_rate) },Math.min(next_delayd,min_anime_frame_interval)); 
+		}
+
+
+		//
+		// 配列全体の高値、安値を求める
+		//
+		function findMaxHighValueAll(){
+			indexHigh = -1;
+			indexLow = -1;
+			maxhigh = CHART_DATA[0].high;
+			minLow = CHART_DATA[0].low;
+			// 最大、最小を求める。
+			for (var i = 0; i < CHART_DATA.length; i++) {
+				if( maxhigh <  CHART_DATA[i].high ){
+					maxhigh = CHART_DATA[i].high;
+					indexHigh = i;
+				}
+				if( minLow >  CHART_DATA[i].low ){
+					minLow = CHART_DATA[i].low;
+					indexLow = i;
+				}
+				CHART_DATA[i].index = i;
+			}
+			// 高値、安値を丸める
+			maxhigh = Math.ceil(maxhigh * 10) / 10 ;
+			minLow = Math.floor(minLow * 10) / 10 ;
+			culcRateY();
+		}
+
+
+		//
+		// 描画範囲の 配列の高値、安値を求める
+		//
+		function findMaxHighValueOffset(){
+			maxhigh = CHART_DATA[data_offset].high;
+			minLow = CHART_DATA[data_offset].low;
+			// 最大、最小を求める。
+			var maxIndex = Math.min(CHART_DATA.length -1 ,data_offset + line_interval_x_count);
+			for (var i = data_offset; i <= maxIndex; i++) {
+				if( maxhigh <  CHART_DATA[i].high ){
+					maxhigh = CHART_DATA[i].high;
+					indexHigh = i;
+				}
+				if( minLow >  CHART_DATA[i].low ){
+					minLow = CHART_DATA[i].low;
+					indexLow = i;
+				}
+				if( ! CHART_DATA[i].ma_end ){
+					continue;
+				}
+				for(var index in CHART_DATA[i].ma_end){
+					var endval = CHART_DATA[i].ma_end[index];
+					if( endval == 0 ){
+						continue;
+					}
+					if( maxhigh <  endval ){
+						maxhigh = endval;
+						indexHigh = i;
+					}
+					if( minLow >  endval ){
+						minLow = endval;
+						indexLow = i;
+					}
+				}
+			}
+			// 高値、安値を丸める 移動平均も含む
+			maxhigh = Math.ceil(maxhigh * 10) / 10 ;
+			minLow = Math.floor(minLow * 10) / 10 ;
+			culcRateY();
+		}
+
+		//
+		// 描画範囲の 配列の高値、安値を求める
+		// 差分計算用
+		//
+		function findMaxHighValueOffsetDiff(offsetdiff){
+			var i = data_offset + offsetdiff;
+			var changed = false;
+			if( maxhigh <  CHART_DATA[i].high ){
+				maxhigh = CHART_DATA[i].high;
+				indexHigh = i;
+				changed = true;
+			}
+			if( minLow >  CHART_DATA[i].low ){
+				minLow = CHART_DATA[i].low;
+				indexLow = i;
+				changed = true;
+			}
+			if( CHART_DATA[i].ma_end ){
+				for(var index in CHART_DATA[i].ma_end){
+					var endval = CHART_DATA[i].ma_end[index];
+					if( endval == 0 ){
+						continue;
+					}
+					if( maxhigh <  endval ){
+						maxhigh = endval;
+						indexHigh = i;
+						changed = true;
+					}
+					if( minLow >  endval ){
+						minLow = endval;
+						indexLow = i;
+						changed = true;
+					}
+				}
+			}
+
+			// 高値、安値を丸める 移動平均も含む
+			if( changed ){
+				maxhigh = Math.ceil(maxhigh * 10) / 10 ;
+				minLow = Math.floor(minLow * 10) / 10 ;
+				culcRateY();
+			}
+		}
+		//
+		// 配列全体の高値、安値を求める
+		//
+		function culcRateY(){
+			var intervalY = (maxhigh - minLow) / ( line_interval_y_count - 6 );
+			// 縦軸計算用の変換率
+			rateY = (lowValueY - highValueY) / (maxhigh - minLow);
+			rateY = Math.floor(rateY);
+		}
+
+		//
+		// 終値の移動平均を計算する
+		// 
+		function culcMovingAverage(moving){
+			var average = 0;
+			for (var i = 0; i < CHART_DATA.length; i++) {
+				average += CHART_DATA[i].end - 0.0;
+				if( i >= ( moving -1) ){
+					if( ! CHART_DATA[i].ma_end ){
+						CHART_DATA[i].ma_end = new Array();
+					}
+					CHART_DATA[i].ma_end[moving] = average / moving;
+					average -= CHART_DATA[i - ( moving -1) ].end;
+				}
+			}
+		}
+		
 		//
 		// ３次スプライン補間で各点間の軌跡のポイントを計算する。
 		//
@@ -619,6 +1014,13 @@
 	</script>
 </head>
 <body onmousedown="return false;">
+	<form>
+	
+		<input type="button" onClick="render_moving_average = ! render_moving_average; stage.draw();" value="toggle moving average">
+		<input type="button" onClick="render_cross_cursor = ! render_cross_cursor; stage.draw();" value="toggle cross cursor">
+		<input type="button" onClick="follow_Yscale_to_displayRange = ! follow_Yscale_to_displayRange; findMaxHighValueAll(); stage.draw();" value="toggle follow Yscale to displayRange">
+	</form>
 	<div id="container">
 	</div>
 </body>
+</html>
